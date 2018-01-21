@@ -1,0 +1,35 @@
+# IntelliJ
+.idea/*
+*.iml
+
+# Maven
+target
+
+# Python
+*.pyc
+.cache
+
+# iPython checkpoint files
+*.ipynb_checkpoints*
+
+# Spark (local)
+metastore_db
+
+# Log files
+*.log
+
+# Platform specific - Mac OSX
+.DS_Store
+
+# Shade plugin maven
+dependency-reduced-pom.xml
+
+# Python coverage
+.coverage
+.coverage.*
+
+# Python profiling
+prof
+
+# Local directory for tests and test files
+.Trash
