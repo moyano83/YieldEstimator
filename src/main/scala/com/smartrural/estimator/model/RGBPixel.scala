@@ -5,12 +5,12 @@ case class RGBPixel(color:Int) {
   val green = (color & 0xff00) / 256
   val blue = (color & 0xff)
 
+  override def hashCode(): Int = blue
+
   override def canEqual(that: Any): Boolean = that match{
     case RGBPixel(_) => true
     case _ => false
   }
-
-  override def hashCode(): Int = blue
 
   override def equals(obj: scala.Any): Boolean = canEqual(obj) &&
     obj.asInstanceOf[RGBPixel].red == this.red &&

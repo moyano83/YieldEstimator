@@ -12,12 +12,10 @@ class PixelLocatorService(image:BufferedImage) {
 
   val imageHeight = image.getHeight
 
-  def findSurroundingClusterPixels(radius:Int,
-                                   upperLeftCorner: PixelCoordinates,
-                                   bottomRightCorner: PixelCoordinates):Set[PixelCoordinates] =
+  def findSurroundingClusterPixels(radius:Int):Set[PixelCoordinates] =
     (for {
-      i <- bottomRightCorner.y until upperLeftCorner.y;
-      j <- upperLeftCorner.x until bottomRightCorner.x;
+      i <- 0 until imageHeight;
+      j <- 0 until imageWidth;
       if isCluster(image.getRGB(i, j))
     } yield extractGrapePixelSurroundings(radius, PixelCoordinates(i,j))).flatten.toSet
 
