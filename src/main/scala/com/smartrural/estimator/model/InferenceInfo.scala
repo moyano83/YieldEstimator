@@ -16,5 +16,5 @@ case class InferenceInfo(imageName:String,
 
   def getXAdjusted(x:Int):Int = xMin + x
 
-  override def toString: String = s"$XMaxRange x $YMaxRange"
+  def getResolution: String = s"$XMaxRange x $YMaxRange"
 }

@@ -1,7 +1,6 @@
 package com.smartrural.estimator.service
 
 import java.io.File
-import javax.imageio.ImageIO
 
 import com.smartrural.estimator.service.impl.{BoundingBoxTextReaderService, LocalImageReconstructionService}
 import org.junit.runner.RunWith
@@ -13,11 +12,11 @@ import scaldi.Module
 @RunWith(classOf[JUnitRunner])
 class ImageReconstructionServiceTest extends FlatSpec{
 
-  val rootPath = getClass.getClassLoader.getResource(".").getPath
+  val rootPathFile = new File(getClass.getClassLoader.getResource(".").getPath)
   val partition = "valdemonjas-2017-09-13_01"
-  val patchesFolder = new File(new File(rootPath), s"inferences/${partition}")
-  val originalImagesFolder =  new File(rootPath.concat(s"original_images/${partition}"))
-  val bboxesFolder =  new File(rootPath.concat(s"inferences_info/${partition}"))
+  val patchesFolder = new File(rootPathFile, s"inferences/${partition}")
+  val originalImagesFolder =  new File(rootPathFile, s"original_images/${partition}")
+  val bboxesFolder =  new File(rootPathFile, s"inferences_info/${partition}")
   val imageName = "z-img-000-000004.jpg"
 
   implicit val inj = new Module{
@@ -47,12 +46,11 @@ class ImageReconstructionServiceTest extends FlatSpec{
   }
 
   it should "reconstruct the final image from the available patches" in {
-    val partition = "valdemonjas-2017-09-13_01"
-    val destinationFolder = new File(rootPath, "results")
+    val destinationFolder = new File(rootPathFile, "results")
     val imageFile = new File(originalImagesFolder, imageName)
 
-    imageReconstructionService.reconstructImage(imageFile, bboxesFolder, patchesFolder, destinationFolder)
-    assert(new File(new File(destinationFolder, partition), imageName).exists())
+    assert(imageReconstructionService.reconstructImage(imageFile, bboxesFolder, patchesFolder, destinationFolder))
+    assert(new File(destinationFolder, imageName).exists())
   }
 
   it should "recreate the binary image from the patches" in {

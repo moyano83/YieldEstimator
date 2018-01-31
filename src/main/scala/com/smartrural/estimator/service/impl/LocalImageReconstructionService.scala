@@ -19,7 +19,7 @@ class LocalImageReconstructionService(implicit inj:Injector) extends ImageRecons
                                 destinationPath:File):Boolean = {
     val originalImage = ImageIO.read(new FileInputStream(originalImageFile))
     val patchesInfoList = bboxService.getFilteredInferenceInfo(bboxesFilePath, originalImageFile.getName)
-    val patchesImages = retrievePatchesForImage(patchesPath.getPath, originalImageFile.getName)
+    val patchesImages = retrievePatchesForImage(patchesPath.getAbsolutePath, originalImageFile.getName)
 
     destinationPath.mkdirs()
 
@@ -43,7 +43,7 @@ class LocalImageReconstructionService(implicit inj:Injector) extends ImageRecons
                                 destinationImage: BufferedImage,
                                 destinationFile: File): Boolean = {
     patchImagesList.foreach(image => {
-      findMatchingInfoByResolution(inferenceInfoList, s"${image.getWidth} x ${image.getHeight}")
+      findMatchingInfoByResolution(inferenceInfoList, getFormattedResolution(image.getWidth, image.getHeight))
         .map(info => writeInferenceImagePixels(image, info, destinationImage))
     })
     if(!patchImagesList.isEmpty) ImageIO.write(destinationImage, "jpg", destinationFile) else false
@@ -51,7 +51,7 @@ class LocalImageReconstructionService(implicit inj:Injector) extends ImageRecons
 
   private def findMatchingInfoByResolution(inferenceInfoList:List[InferenceInfo],
                                            resolution:String):Option[InferenceInfo] =
-    inferenceInfoList.find(_.toString == resolution)
+    inferenceInfoList.find(_.getResolution == resolution)
 
   private def writeInferenceImagePixels(image:BufferedImage, info:InferenceInfo, destinationImage: BufferedImage):Unit =
     for (x <- 0 until info.XMaxRange;
@@ -61,4 +61,6 @@ class LocalImageReconstructionService(implicit inj:Injector) extends ImageRecons
 
   private def writePixel(xCoordinate:Int, yCoordinate:Int, rgb:Int, destination: BufferedImage):Unit =
     if (new RGBPixel(rgb) != AppConstants.VoidRGB) destination.setRGB(xCoordinate, yCoordinate, rgb)
+
+  private def getFormattedResolution(width:Int, height:Int) = s"$width x $height"
 }
