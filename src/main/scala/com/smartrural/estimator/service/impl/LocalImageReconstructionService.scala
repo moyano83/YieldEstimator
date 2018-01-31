@@ -46,7 +46,7 @@ class LocalImageReconstructionService(implicit inj:Injector) extends ImageRecons
       findMatchingInfoByResolution(inferenceInfoList, getFormattedResolution(image.getWidth, image.getHeight))
         .map(info => writeInferenceImagePixels(image, info, destinationImage))
     })
-    if(!patchImagesList.isEmpty) ImageIO.write(destinationImage, "jpg", destinationFile) else false
+    if(!patchImagesList.isEmpty) ImageIO.write(destinationImage, AppConstants.JpgFormat, destinationFile) else false
   }
 
   private def findMatchingInfoByResolution(inferenceInfoList:List[InferenceInfo],

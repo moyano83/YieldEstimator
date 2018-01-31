@@ -6,7 +6,7 @@ object AppConstants {
   /**
     * Value for the min coordinate to use in iterations
     */
-  val MinCoordinateValue = 0
+  val ZeroCoordinate = 0
   /**
     * Value of an unset pixel
     */
@@ -31,4 +31,20 @@ object AppConstants {
     * Property containing the destination path
     */
   val DestinationPath = "destination.file.path"
+  /**
+    * Property containing the destination path
+    */
+  val BinaryImagesPath = "binary.images.path"
+  /**
+    * Property containing the destination path
+    */
+  val RadiusPixelLocator = "radius.pixel.locator"
+  /**
+    * JPG Format
+    */
+  val JpgFormat = "jpg"
+  /**
+    * PNG format
+    */
+  val PngFormat = "png"
 }

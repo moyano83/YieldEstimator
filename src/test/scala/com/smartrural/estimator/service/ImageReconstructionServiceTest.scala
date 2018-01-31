@@ -56,14 +56,6 @@ class ImageReconstructionServiceTest extends FlatSpec{
   it should "recreate the binary image from the patches" in {
 
   }
-
-  it should "write the pixel with the specified value" in {
-
-  }
-
-  it should "not write the pixel if it is void" in {
-
-  }
 }
 
 

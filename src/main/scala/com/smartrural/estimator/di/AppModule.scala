@@ -1,7 +1,7 @@
 package com.smartrural.estimator.di
 
-import com.smartrural.estimator.service.{BoundingBoxService, ImageReconstructionService}
-import com.smartrural.estimator.service.impl.{BoundingBoxTextReaderService, LocalImageReconstructionService}
+import com.smartrural.estimator.service.{BoundingBoxService, ImageReconstructionService, PixelLocatorService}
+import com.smartrural.estimator.service.impl.{BoundingBoxTextReaderService, ImagePixelLocatorService, LocalImageReconstructionService}
 import scaldi.Module
 
 /**
@@ -10,4 +10,5 @@ import scaldi.Module
 class AppModule extends Module{
     bind[BoundingBoxService] to new BoundingBoxTextReaderService
     bind[ImageReconstructionService] to new LocalImageReconstructionService()
+    bind[PixelLocatorService] to new ImagePixelLocatorService()
 }

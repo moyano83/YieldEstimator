@@ -1,31 +1,32 @@
 package com.smartrural.estimator.service.impl
 
 import java.awt.image.BufferedImage
+import java.io.File
 import java.lang.Math._
+import javax.imageio.ImageIO
 
 import com.smartrural.estimator.model.{PixelCoordinates, RGBPixel}
 import com.smartrural.estimator.service.PixelLocatorService
 import com.smartrural.estimator.util.AppConstants._
 
-class ImagePixelLocatorService(image:BufferedImage) extends PixelLocatorService{
+class ImagePixelLocatorService extends PixelLocatorService{
 
-  val imageWidth = image.getWidth
-
-  val imageHeight = image.getHeight
-
-  override def findSurroundingClusterPixels(radius:Int):Set[PixelCoordinates] =
+  override def findSurroundingClusterPixels(image:File, radius:Int):Set[PixelCoordinates] = {
+    val bufferedImage = ImageIO.read(image)
     (for {
-      i <- 0 until imageHeight;
-      j <- 0 until imageWidth;
-      if isCluster(image.getRGB(i, j))
-    } yield extractGrapePixelSurroundings(radius, PixelCoordinates(i,j))).flatten.toSet
-
-  def extractGrapePixelSurroundings(radius:Int, pixelCoordinates:PixelCoordinates):List[PixelCoordinates] =
+      i <- 0 until bufferedImage.getWidth;
+      j <- 0 until bufferedImage.getHeight;
+      if isCluster(bufferedImage.getRGB(i, j))
+    } yield extractGrapePixelSurroundings(bufferedImage, radius, PixelCoordinates(i, j))).flatten.toSet
+  }
+  def extractGrapePixelSurroundings(image:BufferedImage,
+                                    radius:Int,
+                                    pixelCoordinates:PixelCoordinates):List[PixelCoordinates] =
     (for {
-      i <- max(pixelCoordinates.y - radius, MinCoordinateValue) to min(pixelCoordinates.y + radius, imageHeight - 1);
-      j <- max(pixelCoordinates.x - radius, MinCoordinateValue) to min(pixelCoordinates.x + radius, imageWidth - 1);
-      if !isCluster(image.getRGB(i, j))
-    } yield PixelCoordinates(i, j)).toList
+      x <- max(pixelCoordinates.x - radius, ZeroCoordinate) to min(pixelCoordinates.x + radius, image.getWidth - 1);
+      y <- max(pixelCoordinates.y - radius, ZeroCoordinate) to min(pixelCoordinates.y + radius, image.getHeight - 1);
+      if !isCluster(image.getRGB(x, y))
+    } yield PixelCoordinates(x, y)).toList
 
   private def isCluster(pixel:Int):Boolean = RGBPixel(pixel) != VoidRGB
 
