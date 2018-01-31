@@ -2,6 +2,7 @@ package com.smartrural.estimator.service
 
 import javax.imageio.ImageIO
 
+import com.smartrural.estimator.service.impl.ImagePixelLocatorService
 import org.junit.runner.RunWith
 import org.scalatest.FlatSpec
 import org.scalatest.junit.JUnitRunner
@@ -11,7 +12,7 @@ import org.scalatest.junit.JUnitRunner
 class PixelLocatorServiceTest extends FlatSpec{
 
   val image = ImageIO.read(getClass.getClassLoader.getResourceAsStream("./image.png"))
-  val pixelLocatorService = PixelLocatorService(image)
+  val pixelLocatorService = new ImagePixelLocatorService(image)
   behavior of "PixelLocatorService"
 
   it should "locate the non grape pixels surrounding the cluster with different radius" in {

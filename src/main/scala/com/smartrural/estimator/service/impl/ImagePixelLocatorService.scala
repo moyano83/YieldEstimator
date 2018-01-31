@@ -1,0 +1,32 @@
+package com.smartrural.estimator.service.impl
+
+import java.awt.image.BufferedImage
+import java.lang.Math._
+
+import com.smartrural.estimator.model.{PixelCoordinates, RGBPixel}
+import com.smartrural.estimator.service.PixelLocatorService
+import com.smartrural.estimator.util.AppConstants._
+
+class ImagePixelLocatorService(image:BufferedImage) extends PixelLocatorService{
+
+  val imageWidth = image.getWidth
+
+  val imageHeight = image.getHeight
+
+  override def findSurroundingClusterPixels(radius:Int):Set[PixelCoordinates] =
+    (for {
+      i <- 0 until imageHeight;
+      j <- 0 until imageWidth;
+      if isCluster(image.getRGB(i, j))
+    } yield extractGrapePixelSurroundings(radius, PixelCoordinates(i,j))).flatten.toSet
+
+  def extractGrapePixelSurroundings(radius:Int, pixelCoordinates:PixelCoordinates):List[PixelCoordinates] =
+    (for {
+      i <- max(pixelCoordinates.y - radius, MinCoordinateValue) to min(pixelCoordinates.y + radius, imageHeight - 1);
+      j <- max(pixelCoordinates.x - radius, MinCoordinateValue) to min(pixelCoordinates.x + radius, imageWidth - 1);
+      if !isCluster(image.getRGB(i, j))
+    } yield PixelCoordinates(i, j)).toList
+
+  private def isCluster(pixel:Int):Boolean = RGBPixel(pixel) != VoidRGB
+
+}

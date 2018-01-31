@@ -9,6 +9,9 @@ resolvers += "Local Maven Repository" at "file://"+Path.userHome.absolutePath+"/
 
 libraryDependencies ++= Seq(
   "commons-io" % "commons-io" % "2.5",
+  "org.scaldi" %% "scaldi" % "0.5.8",
+  "org.slf4j" % "slf4j-api" % "1.7.25",
+  "org.slf4j" % "slf4j-log4j12" % "1.7.25",
   "org.scalatest" %% "scalatest" % "3.0.4" % "test",
   "junit" % "junit" % "4.12" % "test"
 
