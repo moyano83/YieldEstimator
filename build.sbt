@@ -12,7 +12,7 @@ libraryDependencies ++= Seq(
   "org.scaldi" %% "scaldi" % "0.5.8",
   "org.slf4j" % "slf4j-api" % "1.7.25",
   "org.slf4j" % "slf4j-log4j12" % "1.7.25",
-  "org.scalatest" %% "scalatest" % "3.0.4" % "test",
-  "junit" % "junit" % "4.12" % "test"
-
+  "org.scalatest" %% "scalatest" % "3.0.4" % Test,
+  "junit" % "junit" % "4.12" % Test,
+  "org.scalamock" %% "scalamock" % "4.0.0" % Test
 )

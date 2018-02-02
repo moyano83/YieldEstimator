@@ -5,13 +5,15 @@ import java.io.{File, FileInputStream, FilenameFilter}
 import javax.imageio.ImageIO
 
 import com.smartrural.estimator.model.{InferenceInfo, RGBPixel}
-import com.smartrural.estimator.service.{BoundingBoxService, ImageReconstructionService}
+import com.smartrural.estimator.service.{BoundingBoxService, FileManagerService, ImageReconstructionService}
 import com.smartrural.estimator.util.AppConstants
 import scaldi.{Injectable, Injector}
 
 class LocalImageReconstructionService(implicit inj:Injector) extends ImageReconstructionService with Injectable{
 
   val bboxService = inject[BoundingBoxService]
+
+  val fileManager = inject[FileManagerService]
 
   override def reconstructImage(originalImageFile:File,
                                 bboxesFilePath:File,
@@ -31,12 +33,15 @@ class LocalImageReconstructionService(implicit inj:Injector) extends ImageRecons
     )
   }
 
-  def retrievePatchesForImage(patchesPath:String, imageName:String):List[BufferedImage] =
-    new File(patchesPath)
-      .listFiles(new FilenameFilter {
-        override def accept(dir: File, name: String): Boolean =
-          name.startsWith(imageName.substring(0, imageName.lastIndexOf(".")))
-      }).map(patchFile => ImageIO.read(new FileInputStream(patchFile))).toList
+  def retrievePatchesForImage(patchesPath:String, imageName:String):List[BufferedImage] ={
+    val fileFilter = new FilenameFilter {
+      override def accept(dir: File, name: String): Boolean =
+        name.startsWith(imageName.substring(0, imageName.lastIndexOf(".")))
+    }
+    fileManager.getChildList(patchesPath)
+      .filter(file => fileFilter.accept(file, file.getName))
+      .map(patchFile => ImageIO.read(new FileInputStream(patchFile))).toList
+  }
 
   def createCompleteBinaryImage(patchImagesList: List[BufferedImage],
                                 inferenceInfoList:List[InferenceInfo],

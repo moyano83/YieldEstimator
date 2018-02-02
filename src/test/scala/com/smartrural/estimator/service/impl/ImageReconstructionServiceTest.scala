@@ -1,8 +1,8 @@
-package com.smartrural.estimator.service
+package com.smartrural.estimator.service.impl
 
 import java.io.File
 
-import com.smartrural.estimator.service.impl.{BoundingBoxTextReaderService, LocalImageReconstructionService}
+import com.smartrural.estimator.service.{BoundingBoxService, FileManagerService}
 import org.junit.runner.RunWith
 import org.scalatest.FlatSpec
 import org.scalatest.junit.JUnitRunner
@@ -21,6 +21,7 @@ class ImageReconstructionServiceTest extends FlatSpec{
 
   implicit val inj = new Module{
     bind[BoundingBoxService] to new BoundingBoxTextReaderService
+    bind[FileManagerService] to new LocalFileManager
   }
   val imageReconstructionService = new LocalImageReconstructionService()
 

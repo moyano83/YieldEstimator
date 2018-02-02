@@ -1,8 +1,7 @@
-package com.smartrural.estimator.service
+package com.smartrural.estimator.service.impl
 
 import java.io.File
 
-import com.smartrural.estimator.service.impl.ImagePixelLocatorService
 import org.junit.runner.RunWith
 import org.scalatest.FlatSpec
 import org.scalatest.junit.JUnitRunner
