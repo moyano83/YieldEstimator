@@ -2,16 +2,21 @@ package com.smartrural.estimator.service.impl
 
 import java.io.File
 
+import com.smartrural.estimator.service.FileManagerService
 import org.junit.runner.RunWith
 import org.scalatest.FlatSpec
 import org.scalatest.junit.JUnitRunner
+import scaldi.Module
 
 
 @RunWith(classOf[JUnitRunner])
 class PixelLocatorServiceTest extends FlatSpec{
 
   val image = new File(getClass.getClassLoader.getResource("./image.png").toURI.getPath)
-  val pixelLocatorService = new ImagePixelLocatorService()
+  val pixelLocatorService = new ImagePixelLocatorService()(new Module{
+    bind[FileManagerService] to new LocalFileManager
+  })
+
   behavior of "PixelLocatorService"
 
   it should "locate the non grape pixels surrounding the cluster with different radius" in {

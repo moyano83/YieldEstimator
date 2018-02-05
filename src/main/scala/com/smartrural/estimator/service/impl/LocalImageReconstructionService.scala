@@ -2,7 +2,6 @@ package com.smartrural.estimator.service.impl
 
 import java.awt.image.BufferedImage
 import java.io.{File, FileInputStream, FilenameFilter}
-import javax.imageio.ImageIO
 
 import com.smartrural.estimator.model.{InferenceInfo, RGBPixel}
 import com.smartrural.estimator.service.{BoundingBoxService, FileManagerService, ImageReconstructionService}
@@ -19,7 +18,7 @@ class LocalImageReconstructionService(implicit inj:Injector) extends ImageRecons
                                 bboxesFilePath:File,
                                 patchesPath:File,
                                 destinationPath:File):Boolean = {
-    val originalImage = ImageIO.read(new FileInputStream(originalImageFile))
+    val originalImage = fileManager.readImage(new FileInputStream(originalImageFile))
     val patchesInfoList = bboxService.getFilteredInferenceInfo(bboxesFilePath, originalImageFile.getName)
     val patchesImages = retrievePatchesForImage(patchesPath.getAbsolutePath, originalImageFile.getName)
 
@@ -40,7 +39,7 @@ class LocalImageReconstructionService(implicit inj:Injector) extends ImageRecons
     }
     fileManager.getChildList(patchesPath)
       .filter(file => fileFilter.accept(file, file.getName))
-      .map(patchFile => ImageIO.read(new FileInputStream(patchFile))).toList
+      .map(patchFile => fileManager.readImage(new FileInputStream(patchFile))).toList
   }
 
   def createCompleteBinaryImage(patchImagesList: List[BufferedImage],
@@ -51,7 +50,8 @@ class LocalImageReconstructionService(implicit inj:Injector) extends ImageRecons
       findMatchingInfoByResolution(inferenceInfoList, getFormattedResolution(image.getWidth, image.getHeight))
         .map(info => writeInferenceImagePixels(image, info, destinationImage))
     })
-    if(!patchImagesList.isEmpty) ImageIO.write(destinationImage, AppConstants.JpgFormat, destinationFile) else false
+    if(!patchImagesList.isEmpty) fileManager.writeImage(destinationImage, AppConstants.JpgFormat, destinationFile) else
+      false
   }
 
   private def findMatchingInfoByResolution(inferenceInfoList:List[InferenceInfo],

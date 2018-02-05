@@ -5,7 +5,6 @@ import java.io.File
 import javax.imageio.ImageIO
 
 import com.smartrural.estimator.service.{FileManagerService, PixelLocatorService}
-import com.smartrural.estimator.service.impl.LocalFileManager
 import com.smartrural.estimator.util.AppConstants
 import scaldi.{Injectable, Injector}
 

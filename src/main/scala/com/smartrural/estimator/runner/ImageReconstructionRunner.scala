@@ -3,7 +3,6 @@ package com.smartrural.estimator.runner
 import java.io.File
 
 import com.smartrural.estimator.service.{FileManagerService, ImageReconstructionService}
-import com.smartrural.estimator.service.impl.LocalFileManager
 import scaldi.{Injectable, Injector}
 
 class ImageReconstructionRunner(bboxesPath:String,
