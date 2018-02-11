@@ -1,6 +1,7 @@
 package com.smartrural.estimator.service
 
 import com.smartrural.estimator.model.RGBPixel
+import com.smartrural.estimator.util.AppConstants
 
 /**
   * Created by jm186111 on 05/02/2018.
@@ -12,4 +13,11 @@ trait ColorDetectionService {
     * @return true if it is inside the range
     */
   def isWithinRange(pixel: RGBPixel):Boolean
+
+  /**
+    * Returns true if the pixel is not void
+    * @param rgbColor the RGB pixel
+    * @return true if not void
+    */
+  def isNotVoid(rgbColor: Int):Boolean = new RGBPixel(rgbColor) != AppConstants.VoidRGB
 }

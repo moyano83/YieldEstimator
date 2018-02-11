@@ -11,6 +11,18 @@ import com.smartrural.estimator.service.ColorDetectionService
 class BoundedColorDetectionService(hue:Range, saturation:Range, value:Range) extends ColorDetectionService {
 
   /**
+    * Saturation Normalizing Factor
+    */
+  val HueNormalizingFactor = 360
+  /**
+    * Saturation Normalizing Factor
+    */
+  val SaturationNormalizingFactor = 100
+  /**
+    * Value Normalizing Factor
+    */
+  val ValueNormalizingFactor = 100
+  /**
     * Returns a Boolean indicating if the pixel is within the configured HSB color value
     *
     * @param pixel the rgb value
@@ -18,7 +30,13 @@ class BoundedColorDetectionService(hue:Range, saturation:Range, value:Range) ext
     */
   override def isWithinRange(pixel: RGBPixel): Boolean = {
     val hsbValue = getHSBColor(pixel)
-    isValueOnRange(hue, hsbValue(0)) && isValueOnRange(saturation, hsbValue(1)) && isValueOnRange(value, hsbValue(2))
+    val hueVal = hsbValue(0)
+    val satVal = hsbValue(1)
+    val valueVal = hsbValue(1)
+
+    isValueOnRange(hue, HueNormalizingFactor, hueVal) &&
+      isValueOnRange(saturation, SaturationNormalizingFactor, satVal) &&
+      isValueOnRange(value, ValueNormalizingFactor, valueVal)
   }
 
   /**
@@ -34,6 +52,9 @@ class BoundedColorDetectionService(hue:Range, saturation:Range, value:Range) ext
     * @param value the value to check
     * @return true if it is within range
     */
-  private def isValueOnRange(range:Range, value:Float):Boolean = range.inclusive.contains(value)
+  private def isValueOnRange(range:Range, normalizingFactor:Int, value:Float):Boolean = {
+    val normalizedValue = (normalizingFactor * value).toInt
+    range.min <= normalizedValue && normalizedValue <= range.max
+  }
 
 }

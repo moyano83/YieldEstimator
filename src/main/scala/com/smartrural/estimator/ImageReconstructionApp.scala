@@ -3,7 +3,7 @@ package com.smartrural.estimator
 import java.io.{File, FileInputStream}
 import java.util.Properties
 
-import com.smartrural.estimator.di.AppModule
+import com.smartrural.estimator.di.ImageReconstructionModule
 import com.smartrural.estimator.runner.ImageReconstructionRunner
 import com.smartrural.estimator.util.AppConstants
 import org.slf4j.LoggerFactory
@@ -19,7 +19,7 @@ object ImageReconstructionApp {
       System.exit(1)
     }
 
-    implicit val imageReconstructionService = new AppModule
+    implicit val imageReconstructionService = new ImageReconstructionModule
 
     val properties = new Properties()
     properties.load(new FileInputStream(new File(args(0))))

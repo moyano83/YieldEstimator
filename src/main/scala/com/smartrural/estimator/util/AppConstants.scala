@@ -40,6 +40,30 @@ object AppConstants {
     */
   val RadiusPixelLocator = "radius.pixel.locator"
   /**
+    * Minimum value for hue
+    */
+  val HueMinValue = "hue.min.value"
+  /**
+    * Maximum value for hue
+    */
+  val HueMaxValue = "hue.max.value"
+  /**
+    * Minimum value for saturation
+    */
+  val SaturationMinValue = "saturation.min.value"
+  /**
+    * Maximum value for saturation
+    */
+  val SaturationMaxValue = "saturation.max.value"
+  /**
+    * Minimum value for brightness
+    */
+  val BrightnessMinValue = "brightness.min.value"
+  /**
+    * Maximum value for brightness
+    */
+  val BrightnessMaxValue = "brightness.max.value"
+  /**
     * JPG Format
     */
   val JpgFormat = "jpg"

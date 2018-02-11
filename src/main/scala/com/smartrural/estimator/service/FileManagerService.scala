@@ -50,4 +50,18 @@ trait FileManagerService {
     *         contents of the input, or <code>null</code>.
     */
   def readImage(input: File): BufferedImage
+
+  /**
+    * Gets a composition of the relative paths into a File
+    * @param relativePathLists the paths list
+    * @return the file composed
+    */
+  def getComposedFile(relativePathLists:List[String]):File = {
+    val reversedRelativePathLists = relativePathLists.reverse
+    def getComposedFileAux(relativePaths:List[String]):File = relativePaths match{
+      case filePath :: Nil => new File(filePath)
+      case filePath :: elementList => new File(getComposedFileAux(elementList), filePath)
+    }
+    getComposedFileAux(reversedRelativePathLists)
+  }
 }

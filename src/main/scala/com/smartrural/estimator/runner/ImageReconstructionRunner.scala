@@ -2,7 +2,7 @@ package com.smartrural.estimator.runner
 
 import java.io.File
 
-import com.smartrural.estimator.service.{FileManagerService, ImageReconstructionService}
+import com.smartrural.estimator.service.{BoundingBoxService, FileManagerService, ImageReconstructionService}
 import scaldi.{Injectable, Injector}
 
 class ImageReconstructionRunner(bboxesPath:String,
@@ -13,15 +13,25 @@ class ImageReconstructionRunner(bboxesPath:String,
   val imageReconstructionService = inject[ImageReconstructionService]
 
   val fileManagerService = inject[FileManagerService]
+
+  val boundingBoxService = inject[BoundingBoxService]
+
   override def run() = fileManagerService
-      .getChildList(originalImagesPath)
+      .getChildList(bboxesPath)
       .map(partition => reconstructImagesPerPartition(partition.getName))
       .reduce(_ & _)
 
   def reconstructImagesPerPartition(partition:String):Boolean = fileManagerService
-    .getChildList(new File(originalImagesPath, partition).getAbsolutePath)
-    .map(image => imageReconstructionService.reconstructImage(
-      image, new File(bboxesPath, partition), new File(patchImgPath, partition), new File(destinationPath, partition)
-    )).reduce(_ & _)
+    .getChildList(new File(bboxesPath, partition).getAbsolutePath)
+    .map(bboxFile => boundingBoxService.readBBoxFile(bboxFile))
+    .flatMap(imageMap =>
+      imageMap.map { case (image, inferenceList) =>
+        imageReconstructionService.reconstructImage(
+        fileManagerService.getComposedFile(List(originalImagesPath, partition, image)),
+        inferenceList,
+        fileManagerService.getComposedFile(List(patchImgPath, partition)),
+        fileManagerService.getComposedFile(List(destinationPath, partition)))
+      }
+    ).reduce(_ & _)
 
 }

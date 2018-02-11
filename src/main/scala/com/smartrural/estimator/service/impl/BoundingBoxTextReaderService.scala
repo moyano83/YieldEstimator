@@ -8,12 +8,8 @@ import com.smartrural.estimator.util.AppConstants
 
 class BoundingBoxTextReaderService extends BoundingBoxService{
 
-  override def readBBoxFile(bboxFilePath:File):Iterator[InferenceInfo] =
-    scala.io.Source.fromFile(new File(bboxFilePath, AppConstants.BbBoxesFileName))
-      .getLines().map(getInferenceInfoFromLine)
-
-  override def getFilteredInferenceInfo(bboxFilePath:File, imageName:String) =
-    readBBoxFile(bboxFilePath).filter(_.imageName == imageName)
+  override def readBBoxFile(bboxFile:File):Map[String, List[InferenceInfo]] =
+    scala.io.Source.fromFile(bboxFile).getLines().map(getInferenceInfoFromLine).toList.groupBy(_.imageName)
 
   private def getInferenceInfoFromLine(line:String):InferenceInfo ={
     val lineItems = line.split(" ")

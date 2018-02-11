@@ -21,6 +21,13 @@ class LocalFileManagerTest extends FlatSpec{
 
   behavior of "LocalFileManager"
 
+  it should "compose the File from a list of relative paths" in {
+    val filePaths = List("usr","local","bin","bash")
+    assert(fileManagerService.getComposedFile(filePaths).getPath == "usr/local/bin/bash")
+    val filePaths2 = List("/usr","local","bin","bash")
+    assert(fileManagerService.getComposedFile(filePaths2).getPath == "/usr/local/bin/bash")
+  }
+
   it should "List all the child files" in {
     val inferencesFolder = fileManagerService.getChildList(inferencesPath)
     assert(inferencesFolder.size == 1)
