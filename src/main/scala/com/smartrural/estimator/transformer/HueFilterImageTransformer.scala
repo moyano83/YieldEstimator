@@ -19,7 +19,7 @@ class HueFilterImageTransformer(hue:Range, saturation:Range, value:Range) extend
   val PercentageNormalizingFactor = 100
 
   override def transform(img:BufferedImage): BufferedImage = {
-    val imgFiltered = getImageCanvas(img)
+    val imgFiltered = getImageCanvas(img, false)
     for(x <- 0 until img.getWidth;
         y <- 0 until img.getHeight;
         pixelOfInterest = new ColoredPixel(img, x, y) if isWithinRange(pixelOfInterest)

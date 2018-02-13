@@ -5,7 +5,7 @@ import java.util.Properties
 
 import com.smartrural.estimator.di.ImageReconstructionModule
 import com.smartrural.estimator.runner.ImageFilterRunner
-import com.smartrural.estimator.transformer.{AvgBlurFilterTransformer, HueFilterImageTransformer}
+import com.smartrural.estimator.transformer.{AvgBlurFilterTransformer, GaussianFilterTransformer, HueFilterImageTransformer}
 import com.smartrural.estimator.util.AppConstants
 import org.slf4j.LoggerFactory
 
@@ -41,11 +41,14 @@ object ImageTransformApp {
       Option(properties.getProperty(AppConstants.BrightnessMaxValue)).map(_.toInt).getOrElse(100)
     )
 
+    val sigmaValue = Option(properties.getProperty(AppConstants.GaussSigmaValue)).map(_.toInt).getOrElse(1)
+
+    val iterationsValue = Option(properties.getProperty(AppConstants.GaussIterationsValue)).map(_.toInt).getOrElse(1)
+
     implicit val appModule = new ImageReconstructionModule
 
     val listFilters = List(
-      new AvgBlurFilterTransformer(radius),
-      new HueFilterImageTransformer(hueRange, saturationRange, brightnessRange)
+      new GaussianFilterTransformer(radius, sigmaValue, iterationsValue)
     )
 
     new ImageFilterRunner(bboxesPath, originalImagesPath, destinationPath, listFilters).run

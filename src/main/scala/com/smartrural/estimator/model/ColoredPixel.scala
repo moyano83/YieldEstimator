@@ -15,6 +15,10 @@ case class ColoredPixel(rgbColor:Int, x:Int, y:Int) {
     this(red * 65536 + green * 256 + blue, x, y)
   }
 
+  def this(hsvArray:Array[Float], x:Int, y:Int) {
+    this(Color.HSBtoRGB(hsvArray(0), hsvArray(1), hsvArray(2)), x, y)
+  }
+
   val red = (rgbColor & 0xff0000) / 65536
 
   val green = (rgbColor & 0xff00) / 256

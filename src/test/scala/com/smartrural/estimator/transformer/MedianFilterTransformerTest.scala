@@ -17,7 +17,7 @@ import scaldi.Module
   * Created by jm186111 on 12/02/2018.
   */
 @RunWith(classOf[JUnitRunner])
-class AvgBlurFilterTransformerTest extends FlatSpec with MockFactory{
+class MedianFilterTransformerTest extends FlatSpec with MockFactory{
 
   val rootPathFile = new File(getClass.getClassLoader.getResource(".").getPath)
 
@@ -29,12 +29,12 @@ class AvgBlurFilterTransformerTest extends FlatSpec with MockFactory{
     }
   }
 
-  val filter = new AvgBlurFilterTransformer(2)
+  val filter = new MedianFilterTransformer(3)
 
-  behavior of "AvgBlurFilterTransformer"
+  behavior of "MedianFilterTransformer"
 
   it should "Calculate the gaussian normalized values" in {
-    val dstImage = "z-img-000-000004-avg.jpg"
+    val dstImage = "z-img-000-000004-median.jpg"
     val dstFile = new File(rootPathFile, dstImage)
     val originalImage = ImageIO.read(image)
     ImageIO.write(filter.transform(originalImage), JpgFormat, dstFile)

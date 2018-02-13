@@ -66,6 +66,14 @@ object AppConstants {
     */
   val BrightnessMaxValue = "brightness.max.value"
   /**
+    * Gauss Sigma value property name
+    */
+  val GaussSigmaValue = "gauss.sigma.value"
+  /**
+    * Gauss number of iterations property name
+    */
+  val GaussIterationsValue = "gauss.iterations.value"
+  /**
     * JPG Format
     */
   val JpgFormat = "jpg"
