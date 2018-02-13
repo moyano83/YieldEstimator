@@ -2,7 +2,7 @@ package com.smartrural.estimator.service.impl
 
 import java.io.File
 
-import com.smartrural.estimator.service.{BoundingBoxService, ColorDetectionService, FileManagerService}
+import com.smartrural.estimator.service.{BoundingBoxService, FileManagerService}
 import org.junit.runner.RunWith
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
@@ -20,12 +20,10 @@ class ImageReconstructionServiceTest extends FlatSpec with MockFactory{
   val bboxesFolder =  new File(rootPathFile, s"inferences_info/${partition}")
   val imageName = "z-img-000-000004.jpg"
 
-  val colorService = mock[ColorDetectionService]
   val bboxService = new BoundingBoxTextReaderService
   implicit val inj = new Module{
     bind[BoundingBoxService] to bboxService
     bind[FileManagerService] to new LocalFileManager
-    bind[ColorDetectionService] to new BoundedColorDetectionService(Range(45, 170), Range(0,100), Range(0,100))
   }
   val imageReconstructionService = new LocalImageReconstructionService()
 
@@ -59,17 +57,6 @@ class ImageReconstructionServiceTest extends FlatSpec with MockFactory{
     assert(new File(destinationFolder, imageName).exists())
   }
 
-  it should "filter the pixels of an image according to the configured filter" in {
-    val imageFile = new File(originalImagesFolder, imageName)
-    val destinationImage = new File(rootPathFile, imageName)
-    setColorServiceExpectations()
-    imageReconstructionService.filterImage(imageFile, destinationImage)
-    assert(destinationImage.exists())
-  }
-
-  def setColorServiceExpectations():Unit = {
-    (colorService.isWithinRange _).expects(*).returns(true).anyNumberOfTimes()
-  }
 }
 
 

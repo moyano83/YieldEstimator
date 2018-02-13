@@ -12,5 +12,4 @@ class ImageReconstructionModule extends Module{
     bind[ImageReconstructionService] to new LocalImageReconstructionService()
     bind[PixelLocatorService] to new ImagePixelLocatorService()
     bind[FileManagerService] to new LocalFileManager
-    bind[ColorDetectionService] to new PassAllColorService
 }

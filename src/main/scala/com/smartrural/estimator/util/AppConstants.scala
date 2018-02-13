@@ -1,6 +1,8 @@
 package com.smartrural.estimator.util
 
-import com.smartrural.estimator.model.RGBPixel
+import java.awt.image.BufferedImage
+
+import com.smartrural.estimator.model.ColoredPixel
 
 object AppConstants {
   /**
@@ -8,9 +10,9 @@ object AppConstants {
     */
   val ZeroCoordinate = 0
   /**
-    * Value of an unset pixel
+    * Value of an unset pixel in the position 0,0
     */
-  val VoidRGB = RGBPixel(0)
+  val VoidRGB = ColoredPixel(0, 0, 0)
   /**
     * Name of the files holding information about the bounding boxes
     */
@@ -71,4 +73,5 @@ object AppConstants {
     * PNG format
     */
   val PngFormat = "png"
+
 }

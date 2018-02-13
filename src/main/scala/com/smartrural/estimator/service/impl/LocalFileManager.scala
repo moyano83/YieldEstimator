@@ -4,6 +4,7 @@ import java.awt.image.{BufferedImage, RenderedImage}
 import java.io.{File, InputStream}
 import javax.imageio.ImageIO
 
+import com.smartrural.estimator.model.ColoredPixel
 import com.smartrural.estimator.service.FileManagerService
 import org.apache.commons.io.filefilter.WildcardFileFilter
 
@@ -28,4 +29,7 @@ class LocalFileManager extends FileManagerService{
   override def readImage(input: InputStream): BufferedImage = ImageIO.read(input)
 
   override def readImage(input: File): BufferedImage = ImageIO.read(input)
+
+  override def writePixel(pixel: ColoredPixel, destination: BufferedImage) =
+    if (!pixel.isVoid()) destination.setRGB(pixel.x, pixel.y, pixel.rgbColor)
 }

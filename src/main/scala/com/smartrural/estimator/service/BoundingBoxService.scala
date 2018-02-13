@@ -14,4 +14,11 @@ trait BoundingBoxService {
     * @return the Inferences extracted from the file
     */
   def readBBoxFile(bboxFilePath:File):Map[String, List[InferenceInfo]]
+
+  /**
+    * Gets the list of distinct images contained in the file
+    * @param bboxFilePath the file to read
+    * @return the list of distinct images
+    */
+  def getDistinctImages(bboxFilePath:File):Set[String] = readBBoxFile(bboxFilePath).keySet
 }

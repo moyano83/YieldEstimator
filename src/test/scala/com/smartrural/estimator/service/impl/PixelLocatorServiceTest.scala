@@ -12,10 +12,11 @@ import scaldi.Module
 @RunWith(classOf[JUnitRunner])
 class PixelLocatorServiceTest extends FlatSpec{
 
-  val image = new File(getClass.getClassLoader.getResource("./image.png").toURI.getPath)
+  val fileManagerService = new LocalFileManager
   val pixelLocatorService = new ImagePixelLocatorService()(new Module{
-    bind[FileManagerService] to new LocalFileManager
+    bind[FileManagerService] to fileManagerService
   })
+  val image = fileManagerService.readImage(new File(getClass.getClassLoader.getResource("./image.png").toURI.getPath))
 
   behavior of "PixelLocatorService"
 

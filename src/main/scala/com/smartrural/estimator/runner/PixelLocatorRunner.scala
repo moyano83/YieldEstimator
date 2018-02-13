@@ -1,8 +1,8 @@
 package com.smartrural.estimator.runner
 
 import java.awt.image.BufferedImage
+import java.awt.image.BufferedImage._
 import java.io.File
-import javax.imageio.ImageIO
 
 import com.smartrural.estimator.service.{FileManagerService, PixelLocatorService}
 import com.smartrural.estimator.util.AppConstants
@@ -18,24 +18,26 @@ class PixelLocatorRunner(originalImagesPath:String,
   val fileManagerService = inject[FileManagerService]
 
   override def run():Boolean = {
-    fileManagerService.getChildList(originalImagesPath)
-      .flatMap(partition => fileManagerService.getChildList(partition.getAbsolutePath))
-      .map(originalImageFile => {
-        generateImageWithJustSurroundingClusterPixels(
-          originalImageFile,
-          fileManagerService.getMirrorImageFile(originalImageFile, reconstructedImagesPath),
-          fileManagerService.getMirrorImageFile(originalImageFile, destinationImagesPath))
-      }).reduce(_&_)
+    import fileManagerService._
+    getChildList(originalImagesPath)
+      .flatMap(partition => getChildList(partition.getAbsolutePath))
+      .map(file => (file, readImage(file)))
+      .map{
+        case (originalImageFile:File, originalImageBuffer:BufferedImage) => {
+          val binaryImageBuffer = readImage(getMirrorImageFile(originalImageFile, reconstructedImagesPath))
+          val destinationImageFile = getMirrorImageFile(originalImageFile, destinationImagesPath)
+
+          transformImage(originalImageBuffer, binaryImageBuffer, destinationImageFile)
+        }
+      }.reduce(_ & _)
   }
 
-  def generateImageWithJustSurroundingClusterPixels(originalImage:File,
-                                                    binaryImage:File,
-                                                    destinationImageFile:File):Boolean = {
-    val pixelsToCopy = pixelLocatorService.findSurroundingClusterPixels(binaryImage, radius)
-    val originalImageBuffer = ImageIO.read(originalImage)
-    val destinationImage =
-      new BufferedImage(originalImageBuffer.getHeight, originalImageBuffer.getWidth, BufferedImage.TYPE_INT_RGB)
-    pixelsToCopy.map(coord => destinationImage.setRGB(coord.x, coord.y, originalImageBuffer.getRGB(coord.x, coord.y)))
-    ImageIO.write(destinationImage, AppConstants.JpgFormat, destinationImageFile)
+  def transformImage(originalImageBuffer:BufferedImage,
+                     binaryImageBuffer:BufferedImage,
+                     destinationImageFile:File):Boolean = {
+    val pixelsToCopy = pixelLocatorService.findSurroundingClusterPixels(binaryImageBuffer, radius)
+    val destinationImage = new BufferedImage(originalImageBuffer.getHeight, originalImageBuffer.getWidth, TYPE_INT_RGB)
+    pixelsToCopy.foreach(px => destinationImage.setRGB(px.x, px.y, originalImageBuffer.getRGB(px.x, px.y)))
+    fileManagerService.writeImage(destinationImage, AppConstants.JpgFormat, destinationImageFile)
   }
 }

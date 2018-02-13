@@ -4,14 +4,12 @@ import java.io.{File, FileInputStream}
 import java.util.Properties
 
 import com.smartrural.estimator.di.ImageReconstructionModule
-import com.smartrural.estimator.runner.PixelLocatorRunner
-import com.smartrural.estimator.service.ColorDetectionService
-import com.smartrural.estimator.service.impl.BoundedColorDetectionService
+import com.smartrural.estimator.runner.ImageFilterRunner
+import com.smartrural.estimator.transformer.{AvgBlurFilterTransformer, HueFilterImageTransformer}
 import com.smartrural.estimator.util.AppConstants
 import org.slf4j.LoggerFactory
-import scaldi.Module
 
-object PixelmageLocatorApp {
+object ImageTransformApp {
 
   val logger = LoggerFactory.getLogger(getClass)
 
@@ -22,15 +20,13 @@ object PixelmageLocatorApp {
       System.exit(1)
     }
 
-
-
     val properties = new Properties()
     properties.load(new FileInputStream(new File(args(0))))
 
     val originalImagesPath = properties.getProperty(AppConstants.PropertyOriginalImagePath)
-    val binaryImagesPath = properties.getProperty(AppConstants.BinaryImagesPath)
+    val bboxesPath = properties.getProperty(AppConstants.PropertyBBoxesPath)
     val destinationPath = properties.getProperty(AppConstants.DestinationPath)
-    val radius = properties.getProperty(AppConstants.RadiusPixelLocator)
+    val radius = properties.getProperty(AppConstants.RadiusPixelLocator).toInt
     //Getting the color ranges, if not set, they will be unbounded
     val hueRange = Range(
       Option(properties.getProperty(AppConstants.HueMinValue)).map(_.toInt).getOrElse(0),
@@ -45,11 +41,14 @@ object PixelmageLocatorApp {
       Option(properties.getProperty(AppConstants.BrightnessMaxValue)).map(_.toInt).getOrElse(100)
     )
 
-    implicit val appModule = new ImageReconstructionModule :: new Module{
-      bind[ColorDetectionService] to new BoundedColorDetectionService(hueRange, saturationRange, brightnessRange)
-    }
+    implicit val appModule = new ImageReconstructionModule
 
-    new PixelLocatorRunner(originalImagesPath, binaryImagesPath, destinationPath, radius.toInt).run
+    val listFilters = List(
+      new AvgBlurFilterTransformer(radius),
+      new HueFilterImageTransformer(hueRange, saturationRange, brightnessRange)
+    )
+
+    new ImageFilterRunner(bboxesPath, originalImagesPath, destinationPath, listFilters).run
   }
 
 

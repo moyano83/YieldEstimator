@@ -3,16 +3,14 @@ package com.smartrural.estimator.service.impl
 import java.awt.image.BufferedImage
 import java.io.{File, FileInputStream, FilenameFilter}
 
-import com.smartrural.estimator.model.{InferenceInfo, RGBPixel}
-import com.smartrural.estimator.service.{ColorDetectionService, FileManagerService, ImageReconstructionService}
+import com.smartrural.estimator.model.{ColoredPixel, InferenceInfo}
+import com.smartrural.estimator.service.{FileManagerService, ImageReconstructionService}
 import com.smartrural.estimator.util.AppConstants
 import scaldi.{Injectable, Injector}
 
 class LocalImageReconstructionService(implicit inj:Injector) extends ImageReconstructionService with Injectable{
 
   val fileManager = inject[FileManagerService]
-
-  val colorDetectionService = inject[ColorDetectionService]
 
   override def reconstructImage(originalImageFile:File,
                                 patchesInfoList:List[InferenceInfo],
@@ -31,18 +29,6 @@ class LocalImageReconstructionService(implicit inj:Injector) extends ImageRecons
     )
   }
 
-  override def filterImage(originalImageFile: File, destinationPath: File): Unit = {
-    val image = fileManager.readImage(new FileInputStream(originalImageFile))
-    val destinationImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB)
-    for (x <- 0 until image.getWidth;
-         y <- 0 until image.getHeight();
-         rgb = new RGBPixel(image.getRGB(x,y))
-         if(colorDetectionService.isWithinRange(rgb))
-    ) yield writePixel(x,y,rgb.color, destinationImage)
-
-    fileManager.writeImage(destinationImage, AppConstants.JpgFormat, destinationPath)
-  }
-
   def retrievePatchesForImage(patchesPath:String, imageName:String):List[BufferedImage] ={
     val fileFilter = new FilenameFilter {
       override def accept(dir: File, name: String): Boolean =
@@ -58,7 +44,8 @@ class LocalImageReconstructionService(implicit inj:Injector) extends ImageRecons
                                 destinationImage: BufferedImage,
                                 destinationFile: File): Boolean = {
     patchImagesList.foreach(image => {
-      findMatchingInfoByResolution(inferenceInfoList, getFormattedResolution(image.getWidth, image.getHeight))
+      findMatchingInfoByResolution(inferenceInfoList,
+        fileManager.getFormattedResolution(image))
         .map(info => writeInferenceImagePixels(image, info, destinationImage))
     })
     if(!patchImagesList.isEmpty) fileManager.writeImage(destinationImage, AppConstants.JpgFormat, destinationFile)
@@ -69,14 +56,9 @@ class LocalImageReconstructionService(implicit inj:Injector) extends ImageRecons
                                            resolution:String):Option[InferenceInfo] =
     inferenceInfoList.find(_.getResolution == resolution)
 
-  private def writeInferenceImagePixels(image:BufferedImage, info:InferenceInfo, destinationImage: BufferedImage):Unit =
+  private def writeInferenceImagePixels(img:BufferedImage, info:InferenceInfo, destinationImg: BufferedImage):Unit =
     for (x <- 0 until info.XMaxRange;
          y <- 0 until info.YMaxRange) {
-      writePixel(info.getXAdjusted(x), info.getYAdjusted(y), image.getRGB(x, y), destinationImage)
+      fileManager.writePixel(ColoredPixel(info.getXAdjusted(x), info.getYAdjusted(y), img.getRGB(x, y)), destinationImg)
     }
-
-  private def writePixel(xCoordinate:Int, yCoordinate:Int, rgb:Int, destination: BufferedImage):Unit =
-    if (colorDetectionService.isNotVoid(rgb)) destination.setRGB(xCoordinate, yCoordinate, rgb)
-
-  private def getFormattedResolution(width:Int, height:Int) = s"$width x $height"
 }

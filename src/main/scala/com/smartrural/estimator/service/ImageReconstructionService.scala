@@ -1,5 +1,6 @@
 package com.smartrural.estimator.service
 
+import java.awt.image.BufferedImage
 import java.io.File
 
 import com.smartrural.estimator.model.InferenceInfo
@@ -20,11 +21,4 @@ trait ImageReconstructionService {
                        inferences:List[InferenceInfo],
                        patchesPath:File,
                        destinationPath:File):Boolean
-
-  /**
-    * Creates a filtered image from the original image passed based on the colour configured
-    * @param originalImageFile the path to the original image
-    * @param destinationPath the destination path to write the final image
-    */
-  def filterImage(originalImageFile:File, destinationPath:File):Unit
 }

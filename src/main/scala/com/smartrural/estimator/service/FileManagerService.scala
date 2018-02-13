@@ -3,6 +3,8 @@ package com.smartrural.estimator.service
 import java.awt.image.{BufferedImage, RenderedImage}
 import java.io.{File, InputStream}
 
+import com.smartrural.estimator.model.ColoredPixel
+
 /**
   * Created by jm186111 on 01/02/2018.
   */
@@ -64,4 +66,18 @@ trait FileManagerService {
     }
     getComposedFileAux(reversedRelativePathLists)
   }
+
+  /**
+    * Writes the given pixel in the image passed
+    * @param pixel the pixel value
+    * @param destination the destination image
+    */
+  def writePixel(pixel:ColoredPixel, destination: BufferedImage):Unit
+
+  /**
+    * Gets the formated resolution for the sizes passed
+    * @param img buffered Image
+    * @return the resolution in a formatted string
+    */
+  def getFormattedResolution(img:BufferedImage) = s"${img.getWidth} x ${img.getHeight}"
 }
