@@ -11,6 +11,8 @@ import scaldi.{Injectable, Injector}
   */
 class MedianFilterTransformer(radius:Int)(implicit in:Injector) extends Injectable with ImageTransformer{
 
+  override val filterName: String = "MedianFilter"
+
   val pixelLocatorService = inject[PixelLocatorService]
 
   def filterFunction(surroundingPixels:List[ColoredPixel]):ColoredPixel = {
@@ -23,7 +25,7 @@ class MedianFilterTransformer(radius:Int)(implicit in:Injector) extends Injectab
     new ColoredPixel(redList(medianValue), greenList(medianValue), blueList(medianValue), medianPixel.x, medianPixel.y)
   }
 
-  override def transform(img:BufferedImage):BufferedImage = {
+  override def applyTransform(img:BufferedImage):BufferedImage = {
     val imgBlurred = getImageCanvas(img, false)
     for(x <- 0 until img.getWidth();
         y <- 0 until img.getHeight;

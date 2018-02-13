@@ -9,6 +9,7 @@ import com.smartrural.estimator.model.ColoredPixel
   */
 class HueFilterImageTransformer(hue:Range, saturation:Range, value:Range) extends ImageTransformer {
 
+  override val filterName = "HueFilter"
   /**
     * Degrees Normalizing Factor
     */
@@ -18,7 +19,7 @@ class HueFilterImageTransformer(hue:Range, saturation:Range, value:Range) extend
     */
   val PercentageNormalizingFactor = 100
 
-  override def transform(img:BufferedImage): BufferedImage = {
+  override def applyTransform(img:BufferedImage): BufferedImage = {
     val imgFiltered = getImageCanvas(img, false)
     for(x <- 0 until img.getWidth;
         y <- 0 until img.getHeight;

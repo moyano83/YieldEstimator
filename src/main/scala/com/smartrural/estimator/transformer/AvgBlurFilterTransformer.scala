@@ -11,6 +11,8 @@ import scaldi.{Injectable, Injector}
   */
 class AvgBlurFilterTransformer(radius:Int)(implicit in:Injector) extends Injectable with ImageTransformer{
 
+  override val filterName = "AvgBlurFilter"
+
   val pixelLocatorService = inject[PixelLocatorService]
 
   def filterFunction(surroundingPixels:List[ColoredPixel]):ColoredPixel ={
@@ -22,7 +24,7 @@ class AvgBlurFilterTransformer(radius:Int)(implicit in:Injector) extends Injecta
     new ColoredPixel(r / size, g / size, b / size, medianPixel.x, medianPixel.y)
   }
 
-  override def transform(img:BufferedImage):BufferedImage = {
+  override def applyTransform(img:BufferedImage):BufferedImage = {
     val imgBlurred = getImageCanvas(img, false)
     for(x <- 0 until img.getWidth();
         y <- 0 until img.getHeight;

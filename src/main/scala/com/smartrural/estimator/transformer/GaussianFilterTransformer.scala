@@ -5,16 +5,15 @@ import java.lang.Math._
 
 import com.smartrural.estimator.model.ColoredPixel
 import com.smartrural.estimator.service.{FileManagerService, PixelLocatorService}
-import org.slf4j.LoggerFactory
 import scaldi.{Injectable, Injector}
 
 /**
   * Created by jm186111 on 13/02/2018.
   */
-class GaussianFilterTransformer(radius:Int = 5, sigma:Double = 1.0, iterations:Int = 1)
+class GaussianFilterTransformer(radius:Int = 5, sigma:Double = 1.0, override val iterations:Int = 1)
                                (implicit inj:Injector) extends ImageTransformer with Injectable {
 
-  val logger = LoggerFactory.getLogger(getClass)
+  override val filterName = "GaussianFilter"
 
   val pixelService = inject[PixelLocatorService]
 
@@ -48,7 +47,7 @@ class GaussianFilterTransformer(radius:Int = 5, sigma:Double = 1.0, iterations:I
     new ColoredPixel(Array(h,s,v), medianPixel.x, medianPixel.y)
   }
 
-  private def applyGaussianFilter(img:BufferedImage):BufferedImage = {
+  override def applyTransform(img:BufferedImage):BufferedImage = {
     val dstImg = getImageCanvas(img, true)
     for(x<- radius to img.getWidth-radius;
         y<- radius to img.getHeight -radius;
@@ -56,21 +55,6 @@ class GaussianFilterTransformer(radius:Int = 5, sigma:Double = 1.0, iterations:I
         px = getGaussFilteredPixelWithHSB(pixelService.extractSurroundingPixels(img, radius, originalPixel))
     ) yield fileManagerService.writePixel(px, dstImg)
     dstImg
-  }
-
-  /**
-    * Transform an imagen according to the internal implementation of the Transformer
-    *
-    * @param img the image to transform
-    * @return the transformed image
-    */
-  override def transform(img: BufferedImage): BufferedImage = {
-    var imgDestination = img
-    for(i <- 0 until iterations){
-      logger.info(s"Gaussian filter iteration [${}zZ]")
-      imgDestination = applyGaussianFilter(imgDestination)
-    }
-    imgDestination
   }
 
 }
