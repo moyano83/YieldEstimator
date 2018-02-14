@@ -10,6 +10,5 @@ import scaldi.Module
 class ImageReconstructionModule extends Module{
     bind[BoundingBoxService] to new BoundingBoxTextReaderService
     bind[ImageReconstructionService] to new LocalImageReconstructionService()
-    bind[PixelLocatorService] to new ImagePixelLocatorService()
     bind[FileManagerService] to new LocalFileManager
 }

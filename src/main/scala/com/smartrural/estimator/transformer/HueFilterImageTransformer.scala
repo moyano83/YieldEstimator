@@ -8,8 +8,6 @@ import com.smartrural.estimator.model.ColoredPixel
   * Created by jm186111 on 05/02/2018.
   */
 class HueFilterImageTransformer(hue:Range, saturation:Range, value:Range) extends ImageTransformer {
-
-  override val filterName = "HueFilter"
   /**
     * Degrees Normalizing Factor
     */
@@ -24,7 +22,10 @@ class HueFilterImageTransformer(hue:Range, saturation:Range, value:Range) extend
     for(x <- 0 until img.getWidth;
         y <- 0 until img.getHeight;
         pixelOfInterest = new ColoredPixel(img, x, y) if isWithinRange(pixelOfInterest)
-    ) yield imgFiltered.setRGB(x, y, pixelOfInterest.rgbColor)
+    ) yield {
+      logger.debug(s"Procesing pixel coordinate (${x}, ${y})")
+      imgFiltered.setRGB(x, y, pixelOfInterest.rgbColor)
+    }
     imgFiltered
   }
   /**

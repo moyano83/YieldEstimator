@@ -3,17 +3,12 @@ package com.smartrural.estimator.transformer
 import java.awt.image.BufferedImage
 
 import com.smartrural.estimator.model.ColoredPixel
-import com.smartrural.estimator.service.PixelLocatorService
-import scaldi.{Injectable, Injector}
+import com.smartrural.estimator.util.ImageUtils
 
 /**
   * Created by jm186111 on 12/02/2018.
   */
-class MedianFilterTransformer(radius:Int)(implicit in:Injector) extends Injectable with ImageTransformer{
-
-  override val filterName: String = "MedianFilter"
-
-  val pixelLocatorService = inject[PixelLocatorService]
+class MedianFilterTransformer(radius:Int) extends ImageTransformer{
 
   def filterFunction(surroundingPixels:List[ColoredPixel]):ColoredPixel = {
     val medianValue = surroundingPixels.size / 2 + 1
@@ -30,9 +25,12 @@ class MedianFilterTransformer(radius:Int)(implicit in:Injector) extends Injectab
     for(x <- 0 until img.getWidth();
         y <- 0 until img.getHeight;
         pixelOfInterest = new ColoredPixel(img, x, y);
-        surroundingPixels = pixelLocatorService.extractSurroundingPixels(img, radius, pixelOfInterest);
+        surroundingPixels = ImageUtils.extractSurroundingPixels(img, radius, pixelOfInterest);
         medianPixel = filterFunction(surroundingPixels)
-    ) yield imgBlurred.setRGB(x, y, medianPixel.rgbColor)
+    ) yield {
+      logger.debug(s"Procesing pixel coordinate (${x}, ${y})")
+      imgBlurred.setRGB(x, y, medianPixel.rgbColor)
+    }
 
     imgBlurred
   }

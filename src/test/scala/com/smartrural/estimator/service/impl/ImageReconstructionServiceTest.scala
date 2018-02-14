@@ -3,6 +3,7 @@ package com.smartrural.estimator.service.impl
 import java.io.File
 
 import com.smartrural.estimator.service.{BoundingBoxService, FileManagerService}
+import com.smartrural.estimator.util.AppConstants
 import org.junit.runner.RunWith
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
@@ -17,8 +18,9 @@ class ImageReconstructionServiceTest extends FlatSpec with MockFactory{
   val partition = "valdemonjas-2017-09-13_01"
   val patchesFolder = new File(rootPathFile, s"inferences/${partition}")
   val originalImagesFolder =  new File(rootPathFile, s"original_images/${partition}")
-  val bboxesFolder =  new File(rootPathFile, s"inferences_info/${partition}")
+  val bboxesFolder =  new File(rootPathFile, s"inferences_info/${partition}/${AppConstants.BbBoxesFileName}")
   val imageName = "z-img-000-000004.jpg"
+  val destImageName = "z-img-000-000004.png"
 
   val bboxService = new BoundingBoxTextReaderService
   implicit val inj = new Module{

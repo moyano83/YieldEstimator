@@ -25,7 +25,7 @@ class LocalImageReconstructionService(implicit inj:Injector) extends ImageRecons
       patchesImages,
       patchesInfoList,
       new BufferedImage(originalImage.getWidth, originalImage.getHeight, BufferedImage.TYPE_INT_RGB),
-      new File(destinationPath, originalImageFile.getName)
+      new File(destinationPath, originalImageFile.getName.replace(".jpg", ".png"))
     )
   }
 
@@ -48,8 +48,9 @@ class LocalImageReconstructionService(implicit inj:Injector) extends ImageRecons
         fileManager.getFormattedResolution(image))
         .map(info => writeInferenceImagePixels(image, info, destinationImage))
     })
-    if(!patchImagesList.isEmpty) fileManager.writeImage(destinationImage, AppConstants.JpgFormat, destinationFile)
-    else false
+
+    if(patchImagesList.isEmpty) false
+    else fileManager.writeImage(destinationImage, AppConstants.PngFormat, destinationFile)
   }
 
   private def findMatchingInfoByResolution(inferenceInfoList:List[InferenceInfo],
@@ -59,6 +60,7 @@ class LocalImageReconstructionService(implicit inj:Injector) extends ImageRecons
   private def writeInferenceImagePixels(img:BufferedImage, info:InferenceInfo, destinationImg: BufferedImage):Unit =
     for (x <- 0 until info.XMaxRange;
          y <- 0 until info.YMaxRange) {
-      fileManager.writePixel(ColoredPixel(info.getXAdjusted(x), info.getYAdjusted(y), img.getRGB(x, y)), destinationImg)
+      destinationImg.setRGB(info.getXAdjusted(x), info.getYAdjusted(y),
+        if(new ColoredPixel(img,x,y).isVoid()) 0 else AppConstants.RedColor)
     }
 }

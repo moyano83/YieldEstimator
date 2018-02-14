@@ -3,8 +3,8 @@ package com.smartrural.estimator.transformer
 import java.io.File
 import javax.imageio.ImageIO
 
-import com.smartrural.estimator.service.impl.{ImagePixelLocatorService, LocalFileManager}
-import com.smartrural.estimator.service.{FileManagerService, PixelLocatorService}
+import com.smartrural.estimator.service.FileManagerService
+import com.smartrural.estimator.service.impl.LocalFileManager
 import com.smartrural.estimator.util.AppConstants.JpgFormat
 import org.junit.runner.RunWith
 import org.scalamock.scalatest.MockFactory
@@ -24,7 +24,6 @@ class HueFilterTransformerTest extends FlatSpec with MockFactory{
 
   implicit val inj = new Module{
     bind[FileManagerService] to new LocalFileManager
-    bind[PixelLocatorService] to new ImagePixelLocatorService()
   }
 
   val hueFilter = new HueFilterImageTransformer(Range(60,170), Range(0,100), Range(0,100))

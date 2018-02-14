@@ -68,13 +68,6 @@ trait FileManagerService {
   }
 
   /**
-    * Writes the given pixel in the image passed
-    * @param pixel the pixel value
-    * @param destination the destination image
-    */
-  def writePixel(pixel:ColoredPixel, destination: BufferedImage):Unit
-
-  /**
     * Gets the formated resolution for the sizes passed
     * @param img buffered Image
     * @return the resolution in a formatted string

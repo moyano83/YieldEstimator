@@ -33,7 +33,7 @@ case class ColoredPixel(rgbColor:Int, x:Int, y:Int) {
 
   def getValue = hsb(2)
 
-  def isVoid():Boolean = equals(AppConstants.VoidRGB)
+  def isVoid():Boolean = (red == 0) && (green ==0) && (blue == 0)
 
   override def hashCode(): Int = blue
 
@@ -45,5 +45,7 @@ case class ColoredPixel(rgbColor:Int, x:Int, y:Int) {
   override def equals(obj: scala.Any): Boolean = canEqual(obj) &&
     obj.asInstanceOf[ColoredPixel].red == this.red &&
     obj.asInstanceOf[ColoredPixel].green == this.green &&
-    obj.asInstanceOf[ColoredPixel].blue == this.blue
+    obj.asInstanceOf[ColoredPixel].blue == this.blue &&
+    obj.asInstanceOf[ColoredPixel].x == this.x &&
+    obj.asInstanceOf[ColoredPixel].y == this.y
 }

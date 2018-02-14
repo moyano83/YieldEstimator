@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage
 import java.awt.image.BufferedImage._
 import java.io.File
 
-import com.smartrural.estimator.service.{FileManagerService, PixelLocatorService}
+import com.smartrural.estimator.service.{FileManagerService}
 import com.smartrural.estimator.util.AppConstants
 import scaldi.{Injectable, Injector}
 
@@ -13,7 +13,6 @@ class PixelLocatorRunner(originalImagesPath:String,
                          destinationImagesPath:String,
                          radius:Int)(implicit inj:Injector) extends Injectable with Runner {
 
-  val pixelLocatorService = inject[PixelLocatorService]
 
   val fileManagerService = inject[FileManagerService]
 
@@ -35,9 +34,8 @@ class PixelLocatorRunner(originalImagesPath:String,
   def transformImage(originalImageBuffer:BufferedImage,
                      binaryImageBuffer:BufferedImage,
                      destinationImageFile:File):Boolean = {
-    val pixelsToCopy = pixelLocatorService.findSurroundingClusterPixels(binaryImageBuffer, radius)
     val destinationImage = new BufferedImage(originalImageBuffer.getHeight, originalImageBuffer.getWidth, TYPE_INT_RGB)
-    pixelsToCopy.foreach(px => destinationImage.setRGB(px.x, px.y, originalImageBuffer.getRGB(px.x, px.y)))
+    //pixelsToCopy.foreach(px => destinationImage.setRGB(px.x, px.y, originalImageBuffer.getRGB(px.x, px.y)))
     fileManagerService.writeImage(destinationImage, AppConstants.JpgFormat, destinationImageFile)
   }
 }

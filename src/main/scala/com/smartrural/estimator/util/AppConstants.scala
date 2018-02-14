@@ -6,6 +6,10 @@ import com.smartrural.estimator.model.ColoredPixel
 
 object AppConstants {
   /**
+    * RGB red color
+    */
+  val RedColor = 16711680
+  /**
     * Value for the min coordinate to use in iterations
     */
   val ZeroCoordinate = 0
@@ -81,5 +85,8 @@ object AppConstants {
     * PNG format
     */
   val PngFormat = "png"
-
+  /**
+    * BMP format
+    */
+  val BmpFormat = "BMP"
 }

@@ -30,6 +30,4 @@ class LocalFileManager extends FileManagerService{
 
   override def readImage(input: File): BufferedImage = ImageIO.read(input)
 
-  override def writePixel(pixel: ColoredPixel, destination: BufferedImage) =
-    if (!pixel.isVoid()) destination.setRGB(pixel.x, pixel.y, pixel.rgbColor)
 }

@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory
   */
 trait ImageTransformer {
 
-  val filterName:String
+  val filterName = getClass.getSimpleName
 
   val iterations = 1
 
