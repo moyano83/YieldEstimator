@@ -3,6 +3,7 @@ package com.smartrural.estimator.transformer
 import java.io.File
 import javax.imageio.ImageIO
 
+import com.smartrural.estimator.service.impl.LocalFileManager
 import com.smartrural.estimator.util.AppConstants
 import org.junit.runner.RunWith
 import org.scalamock.scalatest.MockFactory
@@ -14,21 +15,24 @@ import org.scalatest.junit.JUnitRunner
   */
 
 @RunWith(classOf[JUnitRunner])
-class ClusterSurroundingMarkerTransformerTest extends FlatSpec with MockFactory{
+class ClusterSurroundingMarkerTransformerTest extends FlatSpec with MockFactory {
 
-    val rootPathFile = new File(getClass.getClassLoader.getResource(".").getPath)
+  val fileManager = new LocalFileManager
 
-    val image = new File(rootPathFile, "result_inferences/valdemonjas-2017-09-13_01/z-img-000-000004.png")
+  val rootPathFile = new File(getClass.getClassLoader.getResource(".").getPath)
 
-    val filter = new ClusterSurroundingMarkerTransformer(10)
+  val image = new File(rootPathFile, "result_inferences/valdemonjas-2017-09-13_01/z-img-000-000004.png")
 
-    behavior of "ClusterSurroundingMarkerTransformer"
+  val filter = new ClusterSurroundingMarkerTransformer(10)
 
-    it should "Calculate the surrounding pixels values" in {
-      val dstImage = "z-img-000-000004-cluster.jpg"
-      val dstFile = new File(rootPathFile, dstImage)
-      val originalImage = ImageIO.read(image)
-      ImageIO.write(filter.transform(originalImage), AppConstants.PngFormat, dstFile)
-      assert(dstFile.exists())
-    }
+  behavior of "ClusterSurroundingMarkerTransformer"
+
+  it should "execute the filter transformation" in {
+    println(filter.filterName)
+    val dstImage = "z-img-000-000004-cluster-surrounding.jpg"
+    val dstFile = new File(rootPathFile, dstImage)
+    val originalImage = fileManager.readImageAsMat(image)
+    fileManager.writeImage(filter.applyTransform(originalImage), dstFile)
+    assert(dstFile.exists())
+  }
 }

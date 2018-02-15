@@ -4,6 +4,7 @@ import java.awt.image.{BufferedImage, RenderedImage}
 import java.io.{File, InputStream}
 
 import com.smartrural.estimator.model.ColoredPixel
+import org.opencv.core.Mat
 
 /**
   * Created by jm186111 on 01/02/2018.
@@ -36,6 +37,15 @@ trait FileManagerService {
   def writeImage(im: RenderedImage, formatName: String, output: File): Boolean
 
   /**
+    * Wrapper of the ImageIO static write function, so it is possible to mock this call
+    *
+    * @param im         a <code>RenderedImage</code> to be written.
+    * @param output     a <code>File</code> to be written to.
+    * @return <code>false</code> if no appropriate writer is found.
+    */
+  def writeImage(im: Mat, output: File): Boolean
+
+  /**
     * Wrapper of the ImageIO static read function, so it is possible to mock this call
     *
     * @param input an <code>InputStream</code> to read from.
@@ -52,6 +62,14 @@ trait FileManagerService {
     *         contents of the input, or <code>null</code>.
     */
   def readImage(input: File): BufferedImage
+
+  /**
+    * Wrapper of the ImageIO static read function, so it is possible to mock this call
+    *
+    * @param input the file to read from
+    * @return the mat
+    */
+  def readImageAsMat(input: File): Mat
 
   /**
     * Gets a composition of the relative paths into a File

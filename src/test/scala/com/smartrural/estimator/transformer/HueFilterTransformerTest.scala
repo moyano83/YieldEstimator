@@ -18,23 +18,22 @@ import scaldi.Module
 @RunWith(classOf[JUnitRunner])
 class HueFilterTransformerTest extends FlatSpec with MockFactory{
 
+  val fileManager = new LocalFileManager
+
   val rootPathFile = new File(getClass.getClassLoader.getResource(".").getPath)
 
   val image = new File(rootPathFile, "original_images/valdemonjas-2017-09-13_01/z-img-000-000004.jpg")
 
-  implicit val inj = new Module{
-    bind[FileManagerService] to new LocalFileManager
-  }
-
-  val hueFilter = new HueFilterImageTransformer(Range(60,170), Range(0,100), Range(0,100))
+  val filter = new HueFilterImageTransformer(Range(60,170), Range(0,100), Range(0,100))
 
   behavior of "HueFilterImageTransformer"
 
-  it should "run the hue filter" in {
-    val dstImage = "z-img-000-000004-hue.jpg"
+  it should "execute the filter transformation" in {
+    println(filter.filterName)
+    val dstImage = "z-img-000-000004-avg.jpg"
     val dstFile = new File(rootPathFile, dstImage)
-    val originalImage = ImageIO.read(image)
-    ImageIO.write(hueFilter.transform(originalImage), JpgFormat, dstFile)
+    val originalImage = fileManager.readImageAsMat(image)
+    fileManager.writeImage(filter.applyTransform(originalImage), dstFile)
     assert(dstFile.exists())
   }
 }

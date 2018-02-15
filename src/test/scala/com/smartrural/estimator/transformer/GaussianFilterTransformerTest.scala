@@ -18,19 +18,22 @@ import scaldi.Module
 @RunWith(classOf[JUnitRunner])
 class GaussianFilterTransformerTest extends FlatSpec with MockFactory{
 
+  val fileManager = new LocalFileManager
+
   val rootPathFile = new File(getClass.getClassLoader.getResource(".").getPath)
 
   val image = new File(rootPathFile, "original_images/valdemonjas-2017-09-13_01/z-img-000-000004.jpg")
 
-  val filter = new GaussianFilterTransformer(6, 1, 1)
+  val filter = new GaussianFilterTransformer(6, 1)
 
   behavior of "GaussianFilterTransformer"
 
-  it should "Calculate the gaussian normalized values" in {
+  it should "execute the filter transformation" in {
+    println(filter.filterName)
     val dstImage = "z-img-000-000004-gauss.jpg"
     val dstFile = new File(rootPathFile, dstImage)
-    val originalImage = ImageIO.read(image)
-    ImageIO.write(filter.transform(originalImage), JpgFormat, dstFile)
+    val originalImage = fileManager.readImageAsMat(image)
+    fileManager.writeImage(filter.applyTransform(originalImage), dstFile)
     assert(dstFile.exists())
   }
 }

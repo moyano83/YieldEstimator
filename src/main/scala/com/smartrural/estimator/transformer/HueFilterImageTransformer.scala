@@ -3,6 +3,8 @@ package com.smartrural.estimator.transformer
 import java.awt.image.BufferedImage
 
 import com.smartrural.estimator.model.ColoredPixel
+import com.smartrural.estimator.util.ImageUtils._
+import org.opencv.core.Mat
 
 /**
   * Created by jm186111 on 05/02/2018.
@@ -17,7 +19,8 @@ class HueFilterImageTransformer(hue:Range, saturation:Range, value:Range) extend
     */
   val PercentageNormalizingFactor = 100
 
-  override def applyTransform(img:BufferedImage): BufferedImage = {
+  override def applyTransform(imgMat:Mat): Mat = {
+    val img = toBufferedImage(imgMat, None)
     val imgFiltered = getImageCanvas(img, false)
     for(x <- 0 until img.getWidth;
         y <- 0 until img.getHeight;
@@ -26,7 +29,7 @@ class HueFilterImageTransformer(hue:Range, saturation:Range, value:Range) extend
       logger.debug(s"Procesing pixel coordinate (${x}, ${y})")
       imgFiltered.setRGB(x, y, pixelOfInterest.rgbColor)
     }
-    imgFiltered
+    toMat(imgFiltered)
   }
   /**
     * Returns a Boolean indicating if the pixel is within the configured HSB color value

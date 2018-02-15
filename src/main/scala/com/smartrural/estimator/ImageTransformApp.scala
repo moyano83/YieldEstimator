@@ -48,7 +48,7 @@ object ImageTransformApp {
     implicit val appModule = new ImageReconstructionModule
 
     val listFilters = List(
-      new GaussianFilterTransformer(radius, sigmaValue, iterationsValue),
+      new GaussianFilterTransformer(radius, sigmaValue),
       new AvgBlurFilterTransformer(radius),
       new HueFilterImageTransformer(hueRange, saturationRange, brightnessRange)
     )
