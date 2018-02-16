@@ -9,7 +9,8 @@ import org.opencv.imgproc.Imgproc
 class MedianFilterTransformer(radius:Int) extends ImageTransformer{
 
   override def applyTransform(img:Mat):Mat = {
-    Imgproc.medianBlur(img, img, radius)
-    img
+    val dst = new Mat
+    Imgproc.medianBlur(img, dst, radius)
+    dst
   }
 }

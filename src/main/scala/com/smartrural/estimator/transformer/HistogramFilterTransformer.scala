@@ -9,10 +9,10 @@ import scala.collection.mutable.ArrayBuffer
 /**
   * Created by jm186111 on 13/02/2018.
   */
-class HistogramFilterTransformer(val sampleImage:Mat) extends ImageTransformer {
+class HistogramFilterTransformer(val radius:Int, val sampleImage:Mat) extends ImageTransformer {
 
   // size of the h, s and v bins
-  val histSize = new MatOfInt(255,  255, 255);
+  val histSize = new MatOfInt(255, 255, 255);
   // hue varies from 0 to 180, saturation and value from 0 to 256
   val ranges =  new MatOfFloat(0f,180f,0f,256f,0f,256f);
   // we compute the histogram from the 0-th and 2-st channels
@@ -51,7 +51,7 @@ class HistogramFilterTransformer(val sampleImage:Mat) extends ImageTransformer {
     Imgproc.calcBackProject(hsvt, channels, sampleHist, dst, ranges, 1)
 
     // Now convolute with circular disc
-    val disc = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(5,5))
+    val disc = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(radius,radius))
 
     Imgproc.filter2D(dst, dst, -1, disc)
 

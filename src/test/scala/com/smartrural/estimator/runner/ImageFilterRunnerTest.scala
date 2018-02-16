@@ -6,6 +6,7 @@ import com.smartrural.estimator.service.{BoundingBoxService, FileManagerService}
 import com.smartrural.estimator.service.impl.{BoundingBoxTextReaderService, LocalFileManager}
 import com.smartrural.estimator.transformer._
 import org.junit.runner.RunWith
+import org.opencv.core.Core
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 import org.scalatest.junit.JUnitRunner
@@ -17,29 +18,36 @@ import scaldi.Module
 @RunWith(classOf[JUnitRunner])
 class ImageFilterRunnerTest extends FlatSpec with MockFactory{
 
+  System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
+
   val fileManager = new LocalFileManager
+
+  val boundingBoxService = mock[BoundingBoxService]
+  (boundingBoxService.getDistinctImages _).expects(*).onCall{
+    x:File => (x, Set("z-img-000-000004.jpg"))
+  }.once
 
   val rootPathFile = new File(getClass.getClassLoader.getResource(".").getPath)
 
-  val imageSampleBuffer = fileManager.readImageAsMat(new File(rootPathFile, "sample.jpg"))
-  val image = new File(rootPathFile, "original_images/valdemonjas-2017-09-13_01/z-img-000-000004.jpg")
-  val bboxFilePath = s"inferences_info"
+  val imageSample = fileManager.readImageAsMat(new File(rootPathFile, "sample.jpg"))
+
+  val radius = 5
 
   val filterList = List(
-    new MedianFilterTransformer(10),
-    new GaussianFilterTransformer(10,1),
-    new HistogramFilterTransformer(imageSampleBuffer)
+    new MedianFilterTransformer(radius),
+    new GaussianFilterTransformer(radius),
+    new HistogramFilterTransformer(radius, imageSample)
   )
   implicit val inj = new Module{
     bind[FileManagerService] to fileManager
-    bind[BoundingBoxService] to new BoundingBoxTextReaderService
+    bind[BoundingBoxService] to boundingBoxService
   }
   behavior of "ImageFilterRunner"
 
   val runner = new ImageFilterRunner(
     new File(rootPathFile, "inferences_info").getAbsolutePath,
     new File(rootPathFile, "original_images").getAbsolutePath,
-    rootPathFile.getAbsolutePath,
+    new File(rootPathFile, "imgRunner").getAbsolutePath,
     filterList
   )
 

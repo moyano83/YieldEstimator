@@ -22,7 +22,7 @@ class HistogramFilterTransformerTest extends FlatSpec{
   val imageSampleBuffer = fileManager.readImageAsMat(new File(rootPathFile, "sample.jpg"))
   val image = new File(rootPathFile, "original_images/valdemonjas-2017-09-13_01/z-img-000-000004.jpg")
 
-  val filter = new HistogramFilterTransformer(imageSampleBuffer)
+  val filter = new HistogramFilterTransformer(10, imageSampleBuffer)
 
   behavior of "HistogramFilterTransformer"
 

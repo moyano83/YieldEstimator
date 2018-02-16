@@ -20,5 +20,5 @@ trait BoundingBoxService {
     * @param bboxFilePath the file to read
     * @return the list of distinct images
     */
-  def getDistinctImages(bboxFilePath:File):Set[String] = readBBoxFile(bboxFilePath).keySet
+  def getDistinctImages(bboxFilePath:File):(File, Set[String]) = (bboxFilePath, readBBoxFile(bboxFilePath).keySet)
 }

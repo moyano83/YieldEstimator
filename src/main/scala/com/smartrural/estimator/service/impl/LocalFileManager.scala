@@ -6,13 +6,14 @@ import javax.imageio.ImageIO
 
 import com.smartrural.estimator.service.FileManagerService
 import org.apache.commons.io.filefilter.WildcardFileFilter
-import org.opencv.core.Mat
+import org.opencv.core.{Core, Mat}
 import org.opencv.imgcodecs.Imgcodecs
 
 /**
   * Created by jm186111 on 29/01/2018.
   */
 class LocalFileManager extends FileManagerService{
+
   override def getChildList(path:String):Array[File] =
     new File(path)
       .list(new WildcardFileFilter("*"))
@@ -27,7 +28,10 @@ class LocalFileManager extends FileManagerService{
 
   override def writeImage(im: RenderedImage, format: String, output: File): Boolean = ImageIO.write(im, format, output)
 
-  override def writeImage(im: Mat, output: File): Boolean = Imgcodecs.imwrite(output.getAbsolutePath, im)
+  override def writeImage(im: Mat, output: File): Boolean = {
+    output.getParentFile.mkdirs()
+    Imgcodecs.imwrite(output.getAbsolutePath, im)
+  }
 
   override def readImage(input: InputStream): BufferedImage = ImageIO.read(input)
 

@@ -25,19 +25,26 @@ class ImageFilterRunner(bboxesPath:String,
   val fileManagerService = inject[FileManagerService]
 
   override def run(): Boolean = fileManagerService
-    .getChildList(bboxesPath)
-    .flatMap(getBboxesFile)
-    .flatMap(bboxService.getDistinctImages)
-    .map(file => runTransformers(new File(file)))
-    .reduce(_ & _)
+      .getChildList(bboxesPath)
+      .flatMap(getBboxesFile)
+      .map(bboxService.getDistinctImages)
+      .flatMap{case(bboxFile, fileSet) => getImagesFromSetAndBbxFile(bboxFile, fileSet)}
+      .map(runTransformers)
+      .reduce(_ & _)
 
+
+
+  def getImagesFromSetAndBbxFile(bboxFile:File, imageNames:Set[String]):Set[File] ={
+    val partition = bboxFile.getParentFile.getName
+    imageNames.map(image => fileManagerService.getComposedFile(List(originalImagesPath, partition, image)))
+  }
   /**
     * Gets the list of child files
     * @param partition the partition to look for files
     * @return the child list
     */
   def getBboxesFile(partition:File):List[File] = {
-    if(partition.isFile) List(partition)
+    if(partition.isFile && !partition.isDirectory) List(partition)
     else fileManagerService.getChildList(partition.getAbsolutePath).flatMap(getBboxesFile).toList
   }
 
@@ -48,9 +55,7 @@ class ImageFilterRunner(bboxesPath:String,
     */
   def runTransformers(image:File):Boolean = {
     import fileManagerService._
-    val originalImageBuffer = readImageAsMat(image)
-    val transformedImage = listFilters.foldLeft(originalImageBuffer)((img, transformer) =>
-      transformer.applyTransform(img))
-    writeImage(transformedImage, getMirrorImageFile(image, destinationImagesPath))
+    val resultImg = listFilters.foldLeft(readImageAsMat(image))((img, transformer) => transformer.applyTransform(img))
+    writeImage(resultImg, getMirrorImageFile(image, destinationImagesPath))
   }
 }
