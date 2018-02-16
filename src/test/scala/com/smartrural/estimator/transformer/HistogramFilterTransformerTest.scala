@@ -4,7 +4,6 @@ import java.io.File
 import javax.imageio.ImageIO
 
 import com.smartrural.estimator.service.impl.LocalFileManager
-import com.smartrural.estimator.util.AppConstants.PngFormat
 import com.smartrural.estimator.util.ImageUtils
 import org.junit.runner.RunWith
 import org.scalatest.FlatSpec

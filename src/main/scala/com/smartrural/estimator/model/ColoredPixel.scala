@@ -3,8 +3,6 @@ package com.smartrural.estimator.model
 import java.awt.Color
 import java.awt.image.BufferedImage
 
-import com.smartrural.estimator.util.AppConstants
-
 case class ColoredPixel(rgbColor:Int, x:Int, y:Int) {
 
   def this(img:BufferedImage, x:Int, y:Int) {

@@ -1,16 +1,12 @@
 package com.smartrural.estimator.transformer
 
 import java.io.File
-import javax.imageio.ImageIO
 
-import com.smartrural.estimator.service.FileManagerService
 import com.smartrural.estimator.service.impl.LocalFileManager
-import com.smartrural.estimator.util.AppConstants.JpgFormat
 import org.junit.runner.RunWith
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 import org.scalatest.junit.JUnitRunner
-import scaldi.Module
 
 /**
   * Created by jm186111 on 12/02/2018.

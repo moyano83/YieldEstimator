@@ -1,14 +1,14 @@
 package com.smartrural.estimator.util
 
-import java.awt.image.{BufferedImage, DataBufferByte}
+import java.awt.image.{BufferedImage, DataBufferByte, DataBufferInt}
 import java.lang.Math.{max, min}
 
 import com.smartrural.estimator.model.ColoredPixel
 import com.smartrural.estimator.util.AppConstants.ZeroCoordinate
 import org.opencv.core.{Core, CvType, Mat}
 import org.opencv.imgproc.Imgproc
-import scala.collection.JavaConversions._
 
+import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
 
 /**
@@ -18,10 +18,24 @@ object ImageUtils {
 
   System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
 
-  def extractSurroundingPixels(img:BufferedImage, radius:Int, pixel:ColoredPixel):List[ColoredPixel] =
-    (for { x <- max(pixel.x - radius, ZeroCoordinate) to min(pixel.x + radius, img.getWidth - 1);
-           y <- max(pixel.y - radius, ZeroCoordinate) to min(pixel.y + radius, img.getHeight - 1)
-    } yield new ColoredPixel(img, x, y)).toList
+  /**
+    * gets the colored pixel from the mat corresponding to the coordinates passed
+    * @param mat the image
+    * @param x row coordinate
+    * @param y column coordinate
+    * @return the Colored pixel
+    */
+  def arrayToColoredPixel(mat: Mat, x:Int, y:Int):ColoredPixel = {
+    mat.get(x,y) match {
+      case Array(r:Double, g:Double, b:Double) => new ColoredPixel(r.toInt,g.toInt,b.toInt,x,y)
+      case value => throw new Exception(s"Couldn't parse value=[$value]")
+    }
+  }
+
+  def extractSurroundingPixels(img:Mat, radius:Int, pixel:ColoredPixel):List[ColoredPixel] =
+    (for { x <- max(pixel.x - radius, ZeroCoordinate) to min(pixel.x + radius, img.width() - 1);
+           y <- max(pixel.y - radius, ZeroCoordinate) to min(pixel.y + radius, img.height() - 1)
+    } yield arrayToColoredPixel(img,x,y)).toList
 
   /**
     * Converts the Mat into an Image
@@ -49,7 +63,7 @@ object ImageUtils {
     */
   def toMat(bi:BufferedImage):Mat = {
     val mat = new Mat(bi.getHeight(), bi.getWidth(), CvType.CV_8UC3)
-    val data = bi.getRaster().getDataBuffer().asInstanceOf[DataBufferByte].getData()
+    val data = bi.getRaster().getDataBuffer().asInstanceOf[DataBufferInt].getData()
     mat.put(0, 0, data)
     mat
   }
@@ -66,6 +80,17 @@ object ImageUtils {
   }
 
   /**
+    * Wrapper for the cvtColor method
+    * @param image the image
+    * @return the cvtColor
+    */
+  def getRGB(image:Mat):Mat = {
+    val dstImg = new Mat()
+    Imgproc.cvtColor(image, dstImg, Imgproc.COLOR_HSV2BGR)
+    dstImg
+  }
+
+  /**
     * Split planes
     * @param image the image
     * @return the Planes
@@ -76,19 +101,4 @@ object ImageUtils {
     hsvPlanes
   }
 
-  /**
-    * Gets a void image with the same size than the original one
-    * @param img the image to base the copy to
-    * @param isCopy returns a copy if the image if this is true, otherwise returns a blank canvas
-    * @return the bufferedImage
-    */
-  def getImageCanvas(img:BufferedImage, isCopy:Boolean):BufferedImage =
-    if(isCopy){
-      val cm = img.getColorModel()
-      val isAlphaPremultiplied = cm.isAlphaPremultiplied()
-      val raster = img.copyData(null)
-      new BufferedImage(cm, raster, isAlphaPremultiplied, null)
-    }else{
-      new BufferedImage(img.getWidth, img.getHeight, BufferedImage.TYPE_INT_RGB)
-    }
 }

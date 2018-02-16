@@ -5,7 +5,8 @@ import java.io.{File, FileInputStream, FilenameFilter}
 
 import com.smartrural.estimator.model.{ColoredPixel, InferenceInfo}
 import com.smartrural.estimator.service.{FileManagerService, ImageReconstructionService}
-import com.smartrural.estimator.util.AppConstants
+import com.smartrural.estimator.util.AppConstants.{RedColor, VoidColor}
+import org.opencv.core.{CvType, Mat}
 import scaldi.{Injectable, Injector}
 
 class LocalImageReconstructionService(implicit inj:Injector) extends ImageReconstructionService with Injectable{
@@ -24,7 +25,7 @@ class LocalImageReconstructionService(implicit inj:Injector) extends ImageRecons
     createCompleteBinaryImage(
       patchesImages,
       patchesInfoList,
-      new BufferedImage(originalImage.getWidth, originalImage.getHeight, BufferedImage.TYPE_INT_RGB),
+      new Mat(originalImage.getWidth, originalImage.getHeight, CvType.CV_8UC3),
       new File(destinationPath, originalImageFile.getName.replace(".jpg", ".png"))
     )
   }
@@ -41,7 +42,7 @@ class LocalImageReconstructionService(implicit inj:Injector) extends ImageRecons
 
   def createCompleteBinaryImage(patchImagesList: List[BufferedImage],
                                 inferenceInfoList:List[InferenceInfo],
-                                destinationImage: BufferedImage,
+                                destinationImage: Mat,
                                 destinationFile: File): Boolean = {
     patchImagesList.foreach(image => {
       findMatchingInfoByResolution(inferenceInfoList,
@@ -50,17 +51,17 @@ class LocalImageReconstructionService(implicit inj:Injector) extends ImageRecons
     })
 
     if(patchImagesList.isEmpty) false
-    else fileManager.writeImage(destinationImage, AppConstants.PngFormat, destinationFile)
+    else fileManager.writeImage(destinationImage, destinationFile)
   }
 
   private def findMatchingInfoByResolution(inferenceInfoList:List[InferenceInfo],
                                            resolution:String):Option[InferenceInfo] =
     inferenceInfoList.find(_.getResolution == resolution)
 
-  private def writeInferenceImagePixels(img:BufferedImage, info:InferenceInfo, destinationImg: BufferedImage):Unit =
+  private def writeInferenceImagePixels(img:BufferedImage, info:InferenceInfo, destinationImg: Mat):Unit =
     for (x <- 0 until info.XMaxRange;
          y <- 0 until info.YMaxRange) {
-      destinationImg.setRGB(info.getXAdjusted(x), info.getYAdjusted(y),
-        if(new ColoredPixel(img,x,y).isVoid()) 0 else AppConstants.RedColor)
+      destinationImg.put(info.getXAdjusted(x), info.getYAdjusted(y),
+        if(new ColoredPixel(img,x,y).isVoid()) VoidColor else RedColor)
     }
 }

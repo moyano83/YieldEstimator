@@ -19,7 +19,7 @@ class MedianFilterTransformerTest extends FlatSpec{
 
   val image = new File(rootPathFile, "original_images/valdemonjas-2017-09-13_01/z-img-000-000004.jpg")
 
-  val filter = new MedianFilterTransformer(3)
+  val filter = new MedianFilterTransformer(5)
 
   behavior of "MedianFilterTransformer"
 

@@ -1,14 +1,16 @@
 package com.smartrural.estimator.util
 
-import java.awt.image.BufferedImage
-
 import com.smartrural.estimator.model.ColoredPixel
 
 object AppConstants {
   /**
     * RGB red color
     */
-  val RedColor = 16711680
+  val RedColor = Array(255.toByte, 0.toByte, 0.toByte)
+  /**
+    * RGB unset color
+    */
+  val VoidColor = Array(0.toByte, 0.toByte, 0.toByte)
   /**
     * Value for the min coordinate to use in iterations
     */
