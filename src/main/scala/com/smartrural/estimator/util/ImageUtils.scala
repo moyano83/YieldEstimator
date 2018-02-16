@@ -63,7 +63,7 @@ object ImageUtils {
     */
   def toMat(bi:BufferedImage):Mat = {
     val mat = new Mat(bi.getHeight(), bi.getWidth(), CvType.CV_8UC3)
-    val data = bi.getRaster().getDataBuffer().asInstanceOf[DataBufferInt].getData()
+    val data = bi.getRaster().getDataBuffer().asInstanceOf[DataBufferByte].getData()
     mat.put(0, 0, data)
     mat
   }

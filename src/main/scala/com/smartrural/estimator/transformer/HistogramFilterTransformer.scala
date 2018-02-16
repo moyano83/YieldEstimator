@@ -11,37 +11,30 @@ import scala.collection.mutable.ArrayBuffer
   */
 class HistogramFilterTransformer(val sampleImage:Mat) extends ImageTransformer {
 
-  val hBins = 32
-  val sBins = 32
-  val vBins = 32
+  // size of the h, s and v bins
+  val histSize = new MatOfInt(255,  255, 255);
+  // hue varies from 0 to 180, saturation and value from 0 to 256
+  val ranges =  new MatOfFloat(0f,180f,0f,256f,0f,256f);
+  // we compute the histogram from the 0-th and 2-st channels
+  val channels = new MatOfInt(0, 1, 2);
 
-  val hRange = new MatOfFloat(0f, 180f)
-  val sRange = new MatOfFloat(0f, 255f)
-  val vRange = new MatOfFloat(0f, 255f)
   val displayImageSideSize = 512
 
   val cvtRoi = getCVT(sampleImage)
 
   val hsvRoi = splitPlanes(cvtRoi)
+
+  val sampleHist = histogramHSV(hsvRoi)
   /**
     * Calculates the histogram for the given image
     * @param hsvPlanes the hsv planes
     * @return the histogram image
     */
   def histogramHSV(hsvPlanes:ArrayBuffer[Mat]): Mat = {
-    val hMat, sMat, vMat = new Mat()
-
-    Imgproc.calcHist(List(hsvPlanes(0)), new MatOfInt(0), new Mat(), hMat, new MatOfInt(hBins), hRange)
-    Imgproc.calcHist(List(hsvPlanes(1)), new MatOfInt(0), new Mat(), sMat, new MatOfInt(sBins), sRange)
-    Imgproc.calcHist(List(hsvPlanes(2)), new MatOfInt(0), new Mat(), vMat, new MatOfInt(vBins), vRange)
-
-    val finalHistImage = new Mat(displayImageSideSize, displayImageSideSize, CvType.CV_8UC1)
-
-    Core.normalize(hMat, finalHistImage, 0, displayImageSideSize, Core.NORM_MINMAX)
-    Core.normalize(sMat, finalHistImage, 0, displayImageSideSize, Core.NORM_MINMAX)
-    Core.normalize(vMat, finalHistImage, 0, displayImageSideSize, Core.NORM_MINMAX)
-
-    finalHistImage
+    val histRef = new Mat()
+    Imgproc.calcHist(hsvPlanes, channels, new Mat(), histRef, histSize, ranges)
+    Core.normalize(histRef, histRef, 0, displayImageSideSize, Core.NORM_MINMAX)
+    histRef
   }
 
   /**
@@ -51,8 +44,25 @@ class HistogramFilterTransformer(val sampleImage:Mat) extends ImageTransformer {
     * @return the transformed image
     */
   override def applyTransform(originalImg: Mat): Mat = {
-    val backProjection = histogramHSV(splitPlanes(getCVT(originalImg)))
-    backProjection
+    val originalImgHSV = getCVT(originalImg)
+    val hsvt = splitPlanes(originalImgHSV)
+
+    val dst = new Mat
+    Imgproc.calcBackProject(hsvt, channels, sampleHist, dst, ranges, 1)
+
+    // Now convolute with circular disc
+    val disc = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(5,5))
+
+    Imgproc.filter2D(dst, dst, -1, disc)
+
+    //# threshold and binary AND
+    val thresh, res = new Mat()
+    Imgproc.threshold(dst, thresh, 100, 255, Imgproc.THRESH_BINARY)
+    Core.merge(ArrayBuffer(thresh,thresh,thresh), thresh)
+
+    originalImgHSV.copyTo(res, thresh)
+
+    getRGB(res)
   }
 
 
