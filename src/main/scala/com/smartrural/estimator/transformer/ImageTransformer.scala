@@ -1,6 +1,6 @@
 package com.smartrural.estimator.transformer
 
-import org.opencv.core.{Core, Mat}
+import org.opencv.core.Mat
 import org.slf4j.LoggerFactory
 
 
@@ -8,10 +8,6 @@ import org.slf4j.LoggerFactory
   * Created by jm186111 on 12/02/2018.
   */
 trait ImageTransformer {
-  /**
-    * Required to run the openCV functionality
-    */
-  System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
   /**
     * Filter Class name
     */

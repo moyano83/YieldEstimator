@@ -5,6 +5,7 @@ import java.io.File
 import com.smartrural.estimator.service.{BoundingBoxService, FileManagerService}
 import com.smartrural.estimator.util.AppConstants
 import org.junit.runner.RunWith
+import org.opencv.core.Core
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 import org.scalatest.junit.JUnitRunner
@@ -13,6 +14,8 @@ import scaldi.Module
 
 @RunWith(classOf[JUnitRunner])
 class ImageReconstructionServiceTest extends FlatSpec with MockFactory{
+
+  System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
 
   val rootPathFile = new File(getClass.getClassLoader.getResource(".").getPath)
   val partition = "valdemonjas-2017-09-13_01"
@@ -34,20 +37,20 @@ class ImageReconstructionServiceTest extends FlatSpec with MockFactory{
   it should "find the related images within the inferences folder" in {
     val bufferedImageArray = imageReconstructionService.retrievePatchesForImage(patchesFolder.getPath, imageName)
     assert(bufferedImageArray.size == 7)
-    assert(bufferedImageArray(0).getWidth == 91)
-    assert(bufferedImageArray(0).getHeight == 145)
-    assert(bufferedImageArray(1).getWidth == 57)
-    assert(bufferedImageArray(1).getHeight == 65)
-    assert(bufferedImageArray(2).getWidth == 63)
-    assert(bufferedImageArray(2).getHeight == 111)
-    assert(bufferedImageArray(3).getWidth == 31)
-    assert(bufferedImageArray(3).getHeight == 53)
-    assert(bufferedImageArray(4).getWidth == 97)
-    assert(bufferedImageArray(4).getHeight == 132)
-    assert(bufferedImageArray(5).getWidth == 61)
-    assert(bufferedImageArray(5).getHeight == 61)
-    assert(bufferedImageArray(6).getWidth == 59)
-    assert(bufferedImageArray(6).getHeight == 52)
+    assert(bufferedImageArray(0).width == 91)
+    assert(bufferedImageArray(0).height == 145)
+    assert(bufferedImageArray(1).width == 57)
+    assert(bufferedImageArray(1).height == 65)
+    assert(bufferedImageArray(2).width == 63)
+    assert(bufferedImageArray(2).height == 111)
+    assert(bufferedImageArray(3).width == 31)
+    assert(bufferedImageArray(3).height == 53)
+    assert(bufferedImageArray(4).width == 97)
+    assert(bufferedImageArray(4).height == 132)
+    assert(bufferedImageArray(5).width == 61)
+    assert(bufferedImageArray(5).height == 61)
+    assert(bufferedImageArray(6).width == 59)
+    assert(bufferedImageArray(6).height == 52)
   }
 
   it should "reconstruct the final image from the available patches" in {
@@ -56,7 +59,7 @@ class ImageReconstructionServiceTest extends FlatSpec with MockFactory{
     val inferences = bboxService.readBBoxFile(bboxesFolder).get(imageName).get
 
     assert(imageReconstructionService.reconstructImage(imageFile, inferences, patchesFolder, destinationFolder))
-    assert(new File(destinationFolder, imageName).exists())
+    assert(new File(destinationFolder, destImageName).exists())
   }
 
 }

@@ -1,12 +1,10 @@
 package com.smartrural.estimator.service.impl
 
-import java.awt.image.{BufferedImage, RenderedImage}
-import java.io.{File, InputStream}
-import javax.imageio.ImageIO
+import java.io.File
 
 import com.smartrural.estimator.service.FileManagerService
 import org.apache.commons.io.filefilter.WildcardFileFilter
-import org.opencv.core.{Core, Mat}
+import org.opencv.core.Mat
 import org.opencv.imgcodecs.Imgcodecs
 
 /**
@@ -26,17 +24,11 @@ class LocalFileManager extends FileManagerService{
     new File(new File(mirrorBasePath, partitionFolder), imageName)
   }
 
-  override def writeImage(im: RenderedImage, format: String, output: File): Boolean = ImageIO.write(im, format, output)
-
   override def writeImage(im: Mat, output: File): Boolean = {
     output.getParentFile.mkdirs()
     Imgcodecs.imwrite(output.getAbsolutePath, im)
   }
 
-  override def readImage(input: InputStream): BufferedImage = ImageIO.read(input)
-
-  override def readImage(input: File): BufferedImage = ImageIO.read(input)
-
-  override def readImageAsMat(input: File): Mat = Imgcodecs.imread(input.getAbsolutePath)
+  override def readImage(input: File): Mat = Imgcodecs.imread(input.getAbsolutePath)
 
 }

@@ -13,7 +13,7 @@ class HueFilterImageTransformer(hueColor:Range, saturation:Range, value:Range) e
     val highFilter = new Scalar(hueColor.max, saturation.max, value.max) // upper range is not inclusive
     val hsvImage = getCVT(imgMat)
 
-    val dst, mask = new Mat
+    val dst, mask = getMat()
     hsvImage.copyTo(mask)
     Core.inRange(hsvImage, lowFilter, highFilter, mask)
 

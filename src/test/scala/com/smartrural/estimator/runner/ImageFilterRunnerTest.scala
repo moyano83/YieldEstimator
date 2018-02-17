@@ -2,8 +2,8 @@ package com.smartrural.estimator.runner
 
 import java.io.File
 
+import com.smartrural.estimator.service.impl.LocalFileManager
 import com.smartrural.estimator.service.{BoundingBoxService, FileManagerService}
-import com.smartrural.estimator.service.impl.{BoundingBoxTextReaderService, LocalFileManager}
 import com.smartrural.estimator.transformer._
 import org.junit.runner.RunWith
 import org.opencv.core.Core
@@ -23,13 +23,13 @@ class ImageFilterRunnerTest extends FlatSpec with MockFactory{
   val fileManager = new LocalFileManager
 
   val boundingBoxService = mock[BoundingBoxService]
-  (boundingBoxService.getDistinctImages _).expects(*).onCall{
-    x:File => (x, Set("z-img-000-000004.jpg"))
-  }.once
+  (boundingBoxService.getDistinctImages _).expects(*).onCall{(x:File) => (x, Set("z-img-000-000004.jpg"))}.once
 
   val rootPathFile = new File(getClass.getClassLoader.getResource(".").getPath)
 
-  val imageSample = fileManager.readImageAsMat(new File(rootPathFile, "sample.jpg"))
+  val imageSample = fileManager.readImage(new File(rootPathFile, "sample.jpg"))
+
+  val destinationFolder = new File(rootPathFile, "imgRunner")
 
   val radius = 5
 
@@ -47,11 +47,12 @@ class ImageFilterRunnerTest extends FlatSpec with MockFactory{
   val runner = new ImageFilterRunner(
     new File(rootPathFile, "inferences_info").getAbsolutePath,
     new File(rootPathFile, "original_images").getAbsolutePath,
-    new File(rootPathFile, "imgRunner").getAbsolutePath,
+    destinationFolder.getAbsolutePath,
     filterList
   )
 
   it should "generate a result image by applying all filters" in {
+    if(destinationFolder.exists()) destinationFolder.delete()
     assert(runner.run())
   }
 }

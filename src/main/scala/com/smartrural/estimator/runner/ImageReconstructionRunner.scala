@@ -27,10 +27,11 @@ class ImageReconstructionRunner(bboxesPath:String,
     .flatMap(imageMap =>
       imageMap.map { case (image, inferenceList) =>
         imageReconstructionService.reconstructImage(
-        fileManagerService.getComposedFile(List(originalImagesPath, partition, image)),
-        inferenceList,
-        fileManagerService.getComposedFile(List(patchImgPath, partition)),
-        fileManagerService.getComposedFile(List(destinationPath, partition)))
+          fileManagerService.getComposedFile(List(originalImagesPath, partition, image)),
+          inferenceList,
+          fileManagerService.getComposedFile(List(patchImgPath, partition)),
+          fileManagerService.getComposedFile(List(destinationPath, partition))
+        )
       }
     ).reduce(_ & _)
 

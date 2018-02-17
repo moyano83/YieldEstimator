@@ -6,6 +6,7 @@ import javax.imageio.ImageIO
 import com.smartrural.estimator.service.impl.LocalFileManager
 import com.smartrural.estimator.util.ImageUtils
 import org.junit.runner.RunWith
+import org.opencv.core.Core
 import org.scalatest.FlatSpec
 import org.scalatest.junit.JUnitRunner
 
@@ -15,11 +16,13 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class HistogramFilterTransformerTest extends FlatSpec{
 
+  System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
+
   val fileManager = new LocalFileManager
 
   val rootPathFile = new File(getClass.getClassLoader.getResource(".").getPath)
 
-  val imageSampleBuffer = fileManager.readImageAsMat(new File(rootPathFile, "sample.jpg"))
+  val imageSampleBuffer = fileManager.readImage(new File(rootPathFile, "sample.jpg"))
   val image = new File(rootPathFile, "original_images/valdemonjas-2017-09-13_01/z-img-000-000004.jpg")
 
   val filter = new HistogramFilterTransformer(10, imageSampleBuffer)
@@ -30,7 +33,7 @@ class HistogramFilterTransformerTest extends FlatSpec{
     println(filter.filterName)
     val dstImage = "z-img-000-000004-histogram.jpg"
     val dstFile = new File(rootPathFile, dstImage)
-    val originalImage = fileManager.readImageAsMat(image)
+    val originalImage = fileManager.readImage(image)
     fileManager.writeImage(filter.applyTransform(originalImage), dstFile)
     assert(dstFile.exists())
   }

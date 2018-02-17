@@ -1,5 +1,6 @@
 package com.smartrural.estimator.transformer
 
+import com.smartrural.estimator.util.ImageUtils.getMat
 import org.opencv.core.Mat
 import org.opencv.imgproc.Imgproc
 
@@ -9,7 +10,7 @@ import org.opencv.imgproc.Imgproc
 class MedianFilterTransformer(radius:Int) extends ImageTransformer{
 
   override def applyTransform(img:Mat):Mat = {
-    val dst = new Mat
+    val dst = getMat()
     Imgproc.medianBlur(img, dst, radius)
     dst
   }

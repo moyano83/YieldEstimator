@@ -1,12 +1,12 @@
 package com.smartrural.estimator.service.impl
 
-import java.awt.image.BufferedImage
-import java.io.{File, FileInputStream, FilenameFilter}
+import java.io.{File, FilenameFilter}
 
 import com.smartrural.estimator.model.{ColoredPixel, InferenceInfo}
 import com.smartrural.estimator.service.{FileManagerService, ImageReconstructionService}
 import com.smartrural.estimator.util.AppConstants.{RedColor, VoidColor}
-import org.opencv.core.{CvType, Mat}
+import com.smartrural.estimator.util.ImageUtils._
+import org.opencv.core.Mat
 import scaldi.{Injectable, Injector}
 
 class LocalImageReconstructionService(implicit inj:Injector) extends ImageReconstructionService with Injectable{
@@ -17,7 +17,7 @@ class LocalImageReconstructionService(implicit inj:Injector) extends ImageRecons
                                 patchesInfoList:List[InferenceInfo],
                                 patchesPath:File,
                                 destinationPath:File):Boolean = {
-    val originalImage = fileManager.readImage(new FileInputStream(originalImageFile))
+    val originalImage = fileManager.readImage(originalImageFile)
     val patchesImages = retrievePatchesForImage(patchesPath.getAbsolutePath, originalImageFile.getName)
 
     destinationPath.mkdirs()
@@ -25,29 +25,29 @@ class LocalImageReconstructionService(implicit inj:Injector) extends ImageRecons
     createCompleteBinaryImage(
       patchesImages,
       patchesInfoList,
-      new Mat(originalImage.getWidth, originalImage.getHeight, CvType.CV_8UC3),
+      getMat(originalImage.rows(), originalImage.cols()),
       new File(destinationPath, originalImageFile.getName.replace(".jpg", ".png"))
     )
   }
 
-  def retrievePatchesForImage(patchesPath:String, imageName:String):List[BufferedImage] ={
+  def retrievePatchesForImage(patchesPath:String, imageName:String):List[Mat] ={
     val fileFilter = new FilenameFilter {
       override def accept(dir: File, name: String): Boolean =
         name.startsWith(imageName.substring(0, imageName.lastIndexOf(".")))
     }
     fileManager.getChildList(patchesPath)
       .filter(file => fileFilter.accept(file, file.getName))
-      .map(patchFile => fileManager.readImage(new FileInputStream(patchFile))).toList
+      .map(patchFile => fileManager.readImage(patchFile)).toList
   }
 
-  def createCompleteBinaryImage(patchImagesList: List[BufferedImage],
+  def createCompleteBinaryImage(patchImagesList: List[Mat],
                                 inferenceInfoList:List[InferenceInfo],
                                 destinationImage: Mat,
                                 destinationFile: File): Boolean = {
     patchImagesList.foreach(image => {
-      findMatchingInfoByResolution(inferenceInfoList,
-        fileManager.getFormattedResolution(image))
-        .map(info => writeInferenceImagePixels(image, info, destinationImage))
+      findMatchingInfoByResolution(inferenceInfoList, getFormattedResolution(image.rows, image.cols)).map(info => {
+        writeInferenceImagePixels(image, info, destinationImage)
+      })
     })
 
     if(patchImagesList.isEmpty) false
@@ -58,10 +58,9 @@ class LocalImageReconstructionService(implicit inj:Injector) extends ImageRecons
                                            resolution:String):Option[InferenceInfo] =
     inferenceInfoList.find(_.getResolution == resolution)
 
-  private def writeInferenceImagePixels(img:BufferedImage, info:InferenceInfo, destinationImg: Mat):Unit =
-    for (x <- 0 until info.XMaxRange;
-         y <- 0 until info.YMaxRange) {
-      destinationImg.put(info.getXAdjusted(x), info.getYAdjusted(y),
-        if(new ColoredPixel(img,x,y).isVoid()) VoidColor else RedColor)
-    }
+  private def writeInferenceImagePixels(img:Mat, info:InferenceInfo, dst: Mat):Unit =
+    getMatAsColoredPixels(img)
+      .map(pixel => dst.put(info.getRowAdjusted(pixel.row), info.getColAdjusted(pixel.col), getColorForPixel(pixel)))
+
+  private def getColorForPixel(pixel:ColoredPixel) = if (pixel.isVoid()) VoidColor else RedColor
 }

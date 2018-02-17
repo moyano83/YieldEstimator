@@ -4,12 +4,15 @@ import java.io.File
 
 import com.smartrural.estimator.service.impl.LocalFileManager
 import org.junit.runner.RunWith
+import org.opencv.core.Core
 import org.scalatest.FlatSpec
 import org.scalatest.junit.JUnitRunner
 
 
 @RunWith(classOf[JUnitRunner])
 class LocalFileManagerTest extends FlatSpec{
+
+  System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
 
   val rootPath = getClass.getClassLoader.getResource(".").getPath
   val originalImagesPath = new File(rootPath, "original_images").getPath

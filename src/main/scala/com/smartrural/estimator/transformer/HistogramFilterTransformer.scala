@@ -31,8 +31,8 @@ class HistogramFilterTransformer(val radius:Int, val sampleImage:Mat) extends Im
     * @return the histogram image
     */
   def histogramHSV(hsvPlanes:ArrayBuffer[Mat]): Mat = {
-    val histRef = new Mat()
-    Imgproc.calcHist(hsvPlanes, channels, new Mat(), histRef, histSize, ranges)
+    val histRef = getMat()
+    Imgproc.calcHist(hsvPlanes, channels, getMat(), histRef, histSize, ranges)
     Core.normalize(histRef, histRef, 0, displayImageSideSize, Core.NORM_MINMAX)
     histRef
   }
@@ -47,7 +47,7 @@ class HistogramFilterTransformer(val radius:Int, val sampleImage:Mat) extends Im
     val originalImgHSV = getCVT(originalImg)
     val hsvt = splitPlanes(originalImgHSV)
 
-    val dst = new Mat
+    val dst = getMat()
     Imgproc.calcBackProject(hsvt, channels, sampleHist, dst, ranges, 1)
 
     // Now convolute with circular disc
@@ -56,7 +56,7 @@ class HistogramFilterTransformer(val radius:Int, val sampleImage:Mat) extends Im
     Imgproc.filter2D(dst, dst, -1, disc)
 
     //# threshold and binary AND
-    val thresh, res = new Mat()
+    val thresh, res = getMat()
     Imgproc.threshold(dst, thresh, 100, 255, Imgproc.THRESH_BINARY)
     Core.merge(ArrayBuffer(thresh,thresh,thresh), thresh)
 

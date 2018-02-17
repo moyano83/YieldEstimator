@@ -1,20 +1,22 @@
 package com.smartrural.estimator.model
 
+import com.smartrural.estimator.util.ImageUtils
+
 case class InferenceInfo(imageName:String,
                          matchType:String,
                          matchProbability:Double,
-                         xMin:Int,
-                         yMin:Int,
-                         xMax:Int,
-                         yMax:Int){
+                         colMin:Int,
+                         rowMin:Int,
+                         colMax:Int,
+                         rowMax:Int){
 
-  val YMaxRange:Int = yMax - yMin
+  val ColMaxRange:Int = colMax - colMin
 
-  val XMaxRange:Int = xMax - xMin
+  val RowMaxRange:Int = rowMax - rowMin
 
-  def getYAdjusted(y:Int):Int = yMin + y
+  def getColAdjusted(col:Int):Int = colMin + col
 
-  def getXAdjusted(x:Int):Int = xMin + x
+  def getRowAdjusted(row:Int):Int = rowMin + row
 
-  def getResolution: String = s"$XMaxRange x $YMaxRange"
+  def getResolution(): String = ImageUtils.getFormattedResolution(RowMaxRange, ColMaxRange)
 }

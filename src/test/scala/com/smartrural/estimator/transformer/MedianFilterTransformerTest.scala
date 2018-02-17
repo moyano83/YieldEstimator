@@ -4,6 +4,7 @@ import java.io.File
 
 import com.smartrural.estimator.service.impl.LocalFileManager
 import org.junit.runner.RunWith
+import org.opencv.core.Core
 import org.scalatest.FlatSpec
 import org.scalatest.junit.JUnitRunner
 
@@ -12,6 +13,8 @@ import org.scalatest.junit.JUnitRunner
   */
 @RunWith(classOf[JUnitRunner])
 class MedianFilterTransformerTest extends FlatSpec{
+
+  System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
 
   val fileManager = new LocalFileManager
 
@@ -27,7 +30,7 @@ class MedianFilterTransformerTest extends FlatSpec{
     println(filter.filterName)
     val dstImage = "z-img-000-000004-median.jpg"
     val dstFile = new File(rootPathFile, dstImage)
-    val originalImage = fileManager.readImageAsMat(image)
+    val originalImage = fileManager.readImage(image)
     fileManager.writeImage(filter.applyTransform(originalImage), dstFile)
     assert(dstFile.exists())
   }

@@ -1,6 +1,5 @@
 package com.smartrural.estimator.service
 
-import java.awt.image.BufferedImage
 import java.io.File
 
 import com.smartrural.estimator.model.InferenceInfo

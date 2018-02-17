@@ -1,9 +1,7 @@
 package com.smartrural.estimator.service
 
-import java.awt.image.{BufferedImage, RenderedImage}
-import java.io.{File, InputStream}
+import java.io.File
 
-import com.smartrural.estimator.model.ColoredPixel
 import org.opencv.core.Mat
 
 /**
@@ -29,17 +27,6 @@ trait FileManagerService {
     * Wrapper of the ImageIO static write function, so it is possible to mock this call
     *
     * @param im         a <code>RenderedImage</code> to be written.
-    * @param formatName a <code>String</code> containing the informal
-    *                   name of the format.
-    * @param output     a <code>File</code> to be written to.
-    * @return <code>false</code> if no appropriate writer is found.
-    */
-  def writeImage(im: RenderedImage, formatName: String, output: File): Boolean
-
-  /**
-    * Wrapper of the ImageIO static write function, so it is possible to mock this call
-    *
-    * @param im         a <code>RenderedImage</code> to be written.
     * @param output     a <code>File</code> to be written to.
     * @return <code>false</code> if no appropriate writer is found.
     */
@@ -48,28 +35,10 @@ trait FileManagerService {
   /**
     * Wrapper of the ImageIO static read function, so it is possible to mock this call
     *
-    * @param input an <code>InputStream</code> to read from.
-    * @return a <code>BufferedImage</code> containing the decoded
-    *         contents of the input, or <code>null</code>.
-    */
-  def readImage(input: InputStream): BufferedImage
-
-  /**
-    * Wrapper of the ImageIO static read function, so it is possible to mock this call
-    *
-    * @param input the file to read from
-    * @return a <code>BufferedImage</code> containing the decoded
-    *         contents of the input, or <code>null</code>.
-    */
-  def readImage(input: File): BufferedImage
-
-  /**
-    * Wrapper of the ImageIO static read function, so it is possible to mock this call
-    *
     * @param input the file to read from
     * @return the mat
     */
-  def readImageAsMat(input: File): Mat
+  def readImage(input: File): Mat
 
   /**
     * Gets a composition of the relative paths into a File
@@ -85,10 +54,4 @@ trait FileManagerService {
     getComposedFileAux(reversedRelativePathLists)
   }
 
-  /**
-    * Gets the formated resolution for the sizes passed
-    * @param img buffered Image
-    * @return the resolution in a formatted string
-    */
-  def getFormattedResolution(img:BufferedImage) = s"${img.getWidth} x ${img.getHeight}"
 }

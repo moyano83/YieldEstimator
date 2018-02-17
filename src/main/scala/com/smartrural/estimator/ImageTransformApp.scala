@@ -7,6 +7,7 @@ import com.smartrural.estimator.di.ImageReconstructionModule
 import com.smartrural.estimator.runner.ImageFilterRunner
 import com.smartrural.estimator.transformer.{AvgBlurFilterTransformer, GaussianFilterTransformer, HueFilterImageTransformer}
 import com.smartrural.estimator.util.AppConstants
+import org.opencv.core.Core
 import org.slf4j.LoggerFactory
 
 object ImageTransformApp {
@@ -19,6 +20,7 @@ object ImageTransformApp {
       logger.error("Invalid number of parameters. USAGE: 'com.smartrural.estimator.PixelmageLocatorApp <Conf_path>'")
       System.exit(1)
     }
+    System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
 
     val properties = new Properties()
     properties.load(new FileInputStream(new File(args(0))))
@@ -42,8 +44,6 @@ object ImageTransformApp {
     )
 
     val sigmaValue = Option(properties.getProperty(AppConstants.GaussSigmaValue)).map(_.toInt).getOrElse(1)
-
-    val iterationsValue = Option(properties.getProperty(AppConstants.GaussIterationsValue)).map(_.toInt).getOrElse(1)
 
     implicit val appModule = new ImageReconstructionModule
 

@@ -4,11 +4,14 @@ import java.io.File
 
 import com.smartrural.estimator.util.AppConstants
 import org.junit.runner.RunWith
+import org.opencv.core.Core
 import org.scalatest.FlatSpec
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class BoundingBoxTextReaderServiceTest extends FlatSpec{
+
+  System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
 
   val bboxFilePath = s"inferences_info/valdemonjas-2017-09-13_01/${AppConstants.BbBoxesFileName}"
 

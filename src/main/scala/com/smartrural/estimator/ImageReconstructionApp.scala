@@ -6,6 +6,7 @@ import java.util.Properties
 import com.smartrural.estimator.di.ImageReconstructionModule
 import com.smartrural.estimator.runner.ImageReconstructionRunner
 import com.smartrural.estimator.util.AppConstants
+import org.opencv.core.Core
 import org.slf4j.LoggerFactory
 
 object ImageReconstructionApp {
@@ -18,6 +19,7 @@ object ImageReconstructionApp {
       logger.error("Invalid number of parameters. USAGE: 'com.smartrural.estimator.ImageReconstructionApp <Conf_path>'")
       System.exit(1)
     }
+    System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
 
     implicit val imageReconstructionService = new ImageReconstructionModule
 

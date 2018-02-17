@@ -55,7 +55,7 @@ class ImageFilterRunner(bboxesPath:String,
     */
   def runTransformers(image:File):Boolean = {
     import fileManagerService._
-    val resultImg = listFilters.foldLeft(readImageAsMat(image))((img, transformer) => transformer.applyTransform(img))
+    val resultImg = listFilters.foldLeft(readImage(image))((img, transformer) => transformer.applyTransform(img))
     writeImage(resultImg, getMirrorImageFile(image, destinationImagesPath))
   }
 }
