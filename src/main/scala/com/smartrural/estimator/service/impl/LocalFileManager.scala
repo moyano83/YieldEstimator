@@ -13,10 +13,7 @@ import org.opencv.imgcodecs.Imgcodecs
 class LocalFileManager extends FileManagerService{
 
   override def getChildList(path:String):Array[File] =
-    new File(path)
-      .list(new WildcardFileFilter("*"))
-      .map(file=>new File(path, file))
-      .sortBy(_.getName)
+    new File(path).list(new WildcardFileFilter("*")).map(file=>new File(path, file)).sortBy(_.getName)
 
   override def getMirrorImageFile(imageToMirror:File, mirrorBasePath:String):File = {
     val imageName = imageToMirror.getName

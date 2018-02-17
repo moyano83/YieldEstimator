@@ -33,7 +33,7 @@ class LocalImageReconstructionService(implicit inj:Injector) extends ImageRecons
   def retrievePatchesForImage(patchesPath:String, imageName:String):List[Mat] ={
     val fileFilter = new FilenameFilter {
       override def accept(dir: File, name: String): Boolean =
-        name.startsWith(imageName.substring(0, imageName.lastIndexOf(".")))
+        name.startsWith(imageName.substring(0, imageName.lastIndexOf(".")).concat("_"))
     }
     fileManager.getChildList(patchesPath)
       .filter(file => fileFilter.accept(file, file.getName))
@@ -44,10 +44,9 @@ class LocalImageReconstructionService(implicit inj:Injector) extends ImageRecons
                                 inferenceInfoList:List[InferenceInfo],
                                 destinationImage: Mat,
                                 destinationFile: File): Boolean = {
-    patchImagesList.foreach(image => {
-      findMatchingInfoByResolution(inferenceInfoList, getFormattedResolution(image.rows, image.cols)).map(info => {
-        writeInferenceImagePixels(image, info, destinationImage)
-      })
+    patchImagesList.foreach(patchImage => {
+      findMatchingInfoByResolution(inferenceInfoList, getFormattedResolution(patchImage.rows, patchImage.cols))
+        .map(info => writeInferenceImagePixels(patchImage, info, destinationImage))
     })
 
     if(patchImagesList.isEmpty) false

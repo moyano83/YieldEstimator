@@ -6,7 +6,7 @@ object AppConstants {
   /**
     * RGB red color
     */
-  val RedColor = Array(255.toByte, 0.toByte, 0.toByte)
+  val RedColor = Array(0.toByte, 0.toByte, 255.toByte)
   /**
     * RGB unset color
     */

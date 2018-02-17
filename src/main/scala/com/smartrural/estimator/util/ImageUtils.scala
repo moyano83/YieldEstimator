@@ -26,17 +26,24 @@ object ImageUtils {
   /**
     * gets the colored pixel from the mat corresponding to the coordinates passed
     * @param mat the image
-    * @param x row coordinate
-    * @param y column coordinate
+    * @param row row coordinate
+    * @param col column coordinate
     * @return the Colored pixel
     */
-  def arrayToColoredPixel(mat: Mat, x:Int, y:Int):ColoredPixel = {
-    mat.get(x,y) match {
-      case Array(r:Double, g:Double, b:Double) => new ColoredPixel(r.toInt, g.toInt, b.toInt, x, y)
+  def arrayToColoredPixel(mat: Mat, row:Int, col:Int):ColoredPixel = {
+    mat.get(row,col) match {
+      case Array(r:Double, g:Double, b:Double) => new ColoredPixel(r.toInt, g.toInt, b.toInt, row, col)
       case value => throw new Exception(s"Couldn't parse value=[$value]")
     }
   }
 
+  /**
+    * Gets the list of the surrounding pixels by radius
+    * @param img the image
+    * @param radius the radiuls
+    * @param pixel the central pixel
+    * @return the list of surrounding pixels
+    */
   def extractSurroundingPixels(img:Mat, radius:Int, pixel:ColoredPixel):List[ColoredPixel] =
     (for { x <- max(pixel.row - radius, ZeroCoordinate) to min(pixel.row + radius, img.width() - 1);
            y <- max(pixel.col - radius, ZeroCoordinate) to min(pixel.col + radius, img.height() - 1)
@@ -91,7 +98,14 @@ object ImageUtils {
     * @param cols the columns
     * @return the new Mat
     */
-  def getMat(rows:Int, cols:Int) = new Mat(rows, cols, CvType.CV_8UC3)
+  def getMat(rows:Int, cols:Int) = {
+    val mat = new Mat(rows, cols, CvType.CV_8UC3)
+    for(x<-0 until rows;
+        y<-0 until cols){
+      mat.put(x,y,AppConstants.VoidColor)
+    }
+    mat
+  }
 
   /**
     * returns an empty Mat

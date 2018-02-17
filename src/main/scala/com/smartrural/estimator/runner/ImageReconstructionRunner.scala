@@ -3,6 +3,7 @@ package com.smartrural.estimator.runner
 import java.io.File
 
 import com.smartrural.estimator.service.{BoundingBoxService, FileManagerService, ImageReconstructionService}
+import com.smartrural.estimator.util.AppConstants
 import scaldi.{Injectable, Injector}
 
 class ImageReconstructionRunner(bboxesPath:String,
@@ -19,10 +20,11 @@ class ImageReconstructionRunner(bboxesPath:String,
   override def run() = fileManagerService
       .getChildList(bboxesPath)
       .map(partition => reconstructImagesPerPartition(partition.getName))
-      .reduce(_ & _)
+      .foldLeft(true)(_ & _)
 
   def reconstructImagesPerPartition(partition:String):Boolean = fileManagerService
     .getChildList(new File(bboxesPath, partition).getAbsolutePath)
+    .filter(_.getName == AppConstants.BbBoxesFileName)
     .map(bboxFile => boundingBoxService.readBBoxFile(bboxFile))
     .flatMap(imageMap =>
       imageMap.map { case (image, inferenceList) =>
@@ -33,6 +35,6 @@ class ImageReconstructionRunner(bboxesPath:String,
           fileManagerService.getComposedFile(List(destinationPath, partition))
         )
       }
-    ).reduce(_ & _)
+    ).foldLeft(true)(_ & _)
 
 }
