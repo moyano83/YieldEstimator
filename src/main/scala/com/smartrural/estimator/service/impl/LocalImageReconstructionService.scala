@@ -2,7 +2,7 @@ package com.smartrural.estimator.service.impl
 
 import java.io.{File, FilenameFilter}
 
-import com.smartrural.estimator.model.{ColoredPixel, InferenceInfo}
+import com.smartrural.estimator.model.{ColoredPixel, BBoxItemInfo}
 import com.smartrural.estimator.service.{FileManagerService, ImageReconstructionService}
 import com.smartrural.estimator.util.AppConstants.{RedColor, VoidColor}
 import com.smartrural.estimator.util.ImageUtils._
@@ -14,7 +14,7 @@ class LocalImageReconstructionService(implicit inj:Injector) extends ImageRecons
   val fileManager = inject[FileManagerService]
 
   override def reconstructImage(originalImageFile:File,
-                                patchesInfoList:List[InferenceInfo],
+                                patchesInfoList:List[BBoxItemInfo],
                                 patchesPath:File,
                                 destinationPath:File):Boolean = {
     val originalImage = fileManager.readImage(originalImageFile)
@@ -41,7 +41,7 @@ class LocalImageReconstructionService(implicit inj:Injector) extends ImageRecons
   }
 
   def createCompleteBinaryImage(patchImagesList: List[Mat],
-                                inferenceInfoList:List[InferenceInfo],
+                                inferenceInfoList:List[BBoxItemInfo],
                                 destinationImage: Mat,
                                 destinationFile: File): Boolean = {
     patchImagesList.foreach(patchImage => {
@@ -53,11 +53,11 @@ class LocalImageReconstructionService(implicit inj:Injector) extends ImageRecons
     else fileManager.writeImage(destinationImage, destinationFile)
   }
 
-  private def findMatchingInfoByResolution(inferenceInfoList:List[InferenceInfo],
-                                           resolution:String):Option[InferenceInfo] =
+  private def findMatchingInfoByResolution(inferenceInfoList:List[BBoxItemInfo],
+                                           resolution:String):Option[BBoxItemInfo] =
     inferenceInfoList.find(_.getResolution == resolution)
 
-  private def writeInferenceImagePixels(img:Mat, info:InferenceInfo, dst: Mat):Unit =
+  private def writeInferenceImagePixels(img:Mat, info:BBoxItemInfo, dst: Mat):Unit =
     getMatAsColoredPixels(img)
       .map(pixel => dst.put(info.getRowAdjusted(pixel.row), info.getColAdjusted(pixel.col), getColorForPixel(pixel)))
 

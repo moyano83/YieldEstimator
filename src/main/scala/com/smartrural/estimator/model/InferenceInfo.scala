@@ -1,22 +1,10 @@
 package com.smartrural.estimator.model
 
-import com.smartrural.estimator.util.ImageUtils
+/**
+  * Created by jm186111 on 27/02/2018.
+  */
+case class InferenceInfo(`type`:String, geometry:InferenceGeometry, properties:InferenceProperties)
 
-case class InferenceInfo(imageName:String,
-                         matchType:String,
-                         matchProbability:Double,
-                         colMin:Int,
-                         rowMin:Int,
-                         colMax:Int,
-                         rowMax:Int){
+case class InferenceGeometry(`type`:String, coordinates:Array[Double])
 
-  val ColMaxRange:Int = colMax - colMin
-
-  val RowMaxRange:Int = rowMax - rowMin
-
-  def getColAdjusted(col:Int):Int = colMin + col
-
-  def getRowAdjusted(row:Int):Int = rowMin + row
-
-  def getResolution(): String = ImageUtils.getFormattedResolution(RowMaxRange, ColMaxRange)
-}
+case class InferenceProperties(cartodb_id:Int, url:String, width:Int, height:Int, pixels:Int, clusters:Int, cm2:Int)

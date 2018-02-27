@@ -2,7 +2,7 @@ package com.smartrural.estimator.service
 
 import java.io.File
 
-import com.smartrural.estimator.model.InferenceInfo
+import com.smartrural.estimator.model.BBoxItemInfo
 
 /**
   * Created by jm186111 on 31/01/2018.
@@ -17,7 +17,7 @@ trait ImageReconstructionService {
     * @return true if the operation was executed successfully
     */
   def reconstructImage(originalImageFile:File,
-                       inferences:List[InferenceInfo],
+                       inferences:List[BBoxItemInfo],
                        patchesPath:File,
                        destinationPath:File):Boolean
 }

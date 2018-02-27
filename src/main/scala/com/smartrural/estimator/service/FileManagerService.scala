@@ -41,6 +41,12 @@ trait FileManagerService {
   def readImage(input: File): Mat
 
   /**
+    * writes the given object into the destination file
+    * @param obj the obj to write as a line
+    * @param file the destination file
+    */
+  def writeObjAsLineToFile(obj:Any, file:File):Boolean
+  /**
     * Gets a composition of the relative paths into a File
     * @param relativePathLists the paths list
     * @return the file composed

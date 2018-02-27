@@ -4,7 +4,6 @@ import java.io.File
 
 import com.smartrural.estimator.service.{BoundingBoxService, FileManagerService}
 import com.smartrural.estimator.transformer.ImageTransformer
-import com.smartrural.estimator.util.AppConstants.JpgFormat
 import scaldi.{Injectable, Injector}
 
 /**

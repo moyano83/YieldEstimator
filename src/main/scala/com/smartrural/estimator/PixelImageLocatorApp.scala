@@ -22,7 +22,7 @@ object PixelImageLocatorApp {
     val properties = new Properties()
     properties.load(new FileInputStream(new File(args(0))))
 
-
+    val
   }
 
 

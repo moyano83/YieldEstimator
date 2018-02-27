@@ -21,7 +21,7 @@ class ImageReconstructionServiceTest extends FlatSpec with MockFactory{
   val partition = "valdemonjas-2017-09-13_01"
   val patchesFolder = new File(rootPathFile, s"inferences/${partition}")
   val originalImagesFolder =  new File(rootPathFile, s"original_images/${partition}")
-  val bboxesFolder =  new File(rootPathFile, s"inferences_info/${partition}/${AppConstants.BbBoxesFileName}")
+  val bboxesFolder =  new File(rootPathFile, s"bbox_info/${partition}/${AppConstants.BbBoxesFileName}")
   val imageName = "z-img-000-000004.jpg"
   val destImageName = "z-img-000-000004.png"
 

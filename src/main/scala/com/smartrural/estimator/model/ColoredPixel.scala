@@ -1,12 +1,6 @@
 package com.smartrural.estimator.model
 
-import java.awt.image.BufferedImage
-
 case class ColoredPixel(rgbColor:Int, row:Int, col:Int) {
-
-  def this(img:BufferedImage, row:Int, col:Int) {
-    this(img.getRGB(row,col), row, col)
-  }
 
   def this(red:Int, green:Int, blue:Int, row:Int, col:Int) {
     this(red * 65536 + green * 256 + blue, row, col)

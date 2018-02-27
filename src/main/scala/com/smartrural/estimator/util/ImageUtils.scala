@@ -2,7 +2,7 @@ package com.smartrural.estimator.util
 
 import java.lang.Math.{max, min}
 
-import com.smartrural.estimator.model.{ColoredPixel, InferenceInfo}
+import com.smartrural.estimator.model.{ColoredPixel, BBoxItemInfo}
 import com.smartrural.estimator.util.AppConstants.ZeroCoordinate
 import org.opencv.core.{Core, CvType, Mat}
 import org.opencv.imgproc.Imgproc
@@ -41,13 +41,25 @@ object ImageUtils {
     * Gets the list of the surrounding pixels by radius
     * @param img the image
     * @param radius the radiuls
+    * @return the list of surrounding pixels
+    */
+  def extractSurroundingPixels(img:Mat, radius:Int):Set[ColoredPixel] =
+    (for {row <- ZeroCoordinate to img.rows();
+                          col <- ZeroCoordinate to img.cols();
+                          pixel = arrayToColoredPixel(img, row, col) if pixel != AppConstants.VoidColor
+    } yield extractSurroundingPixels(img, radius, pixel)).flatten.toSet
+
+  /**
+    * Gets the list of the surrounding pixels by radius
+    * @param img the image
+    * @param radius the radiuls
     * @param pixel the central pixel
     * @return the list of surrounding pixels
     */
-  def extractSurroundingPixels(img:Mat, radius:Int, pixel:ColoredPixel):List[ColoredPixel] =
+  def extractSurroundingPixels(img:Mat, radius:Int, pixel:ColoredPixel):Set[ColoredPixel] =
     (for { x <- max(pixel.row - radius, ZeroCoordinate) to min(pixel.row + radius, img.width() - 1);
            y <- max(pixel.col - radius, ZeroCoordinate) to min(pixel.col + radius, img.height() - 1)
-    } yield arrayToColoredPixel(img,x,y)).toList
+    } yield arrayToColoredPixel(img,x,y)).toSet
 
   /**
     * Wrapper for the cvtColor method

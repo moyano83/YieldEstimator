@@ -55,7 +55,7 @@ class HistogramFilterTransformer(val radius:Int, val sampleImage:Mat) extends Im
 
     Imgproc.filter2D(dst, dst, -1, disc)
 
-    //# threshold and binary AND
+    // threshold and binary AND
     val thresh, res = getMat()
     Imgproc.threshold(dst, thresh, 100, 255, Imgproc.THRESH_BINARY)
     Core.merge(ArrayBuffer(thresh,thresh,thresh), thresh)

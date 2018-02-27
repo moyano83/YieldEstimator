@@ -2,42 +2,52 @@ package com.smartrural.estimator.runner
 
 import java.io.File
 
-import com.smartrural.estimator.service.FileManagerService
-import com.smartrural.estimator.transformer.ClusterSurroundingMarkerTransformer
-import com.smartrural.estimator.util.ImageUtils
+import com.smartrural.estimator.model.{ColoredPixel, InferenceInfo, VineYieldParameters}
+import com.smartrural.estimator.service.{FileManagerService, InferenceService}
+import com.smartrural.estimator.util.AppConstants.VoidColor
+import com.smartrural.estimator.util.ImageUtils._
 import org.opencv.core.Mat
 import scaldi.{Injectable, Injector}
 
-class PixelLocatorRunner(originalImagesPath:String,
+class PixelLocatorRunner(inferencesFile:File,
+                         filteredImagePath:String,
                          reconstructedImagesPath:String,
-                         destinationImagesPath:String,
+                         destinationResultFile:File,
                          radius:Int)(implicit inj:Injector) extends Injectable with Runner {
-
 
   val fileManagerService = inject[FileManagerService]
 
-  val transformer = new ClusterSurroundingMarkerTransformer()
+  val inferenceService = inject[InferenceService]
 
-  override def run():Boolean = {
-    import fileManagerService._
-    getChildList(originalImagesPath)
+  import fileManagerService._
+
+  override def run():Boolean =
+    getChildList(filteredImagePath)
       .flatMap(partition => getChildList(partition.getAbsolutePath))
       .map(file => (file, readImage(file)))
-      .map{
-        case (originalImageFile:File, originalImageBuffer:Mat) => {
-          val binaryImageBuffer = readImage(getMirrorImageFile(originalImageFile, reconstructedImagesPath))
-          val destinationImageFile = getMirrorImageFile(originalImageFile, destinationImagesPath)
-
-          transformImage(originalImageBuffer, binaryImageBuffer, destinationImageFile)
+      .map({
+        case (transformedImageFile:File, transformedImageMat:Mat) => {
+          calculateVineYieldParam(transformedImageFile, transformedImageMat)
         }
-      }.reduce(_ & _)
+      })
+      .flatten
+      .map(vineParameters => {
+        fileManagerService.writeObjAsLineToFile(vineParameters, destinationResultFile)
+      })
+      .foldLeft(true)(_ & _)
+
+  private def calculateVineYieldParam(transformedImageFile: File, transformedImageMat: Mat) = {
+    val binaryImageBuffer = readImage(getMirrorImageFile(transformedImageFile, reconstructedImagesPath))
+    val percentage = getLeafPixelPercentage(transformedImageMat, binaryImageBuffer)
+    val inference = inferenceService.getInferenceByPictureName(inferencesFile, getFileSearchString(transformedImageFile))
+    inference.map(inf => new VineYieldParameters(inf, percentage))
   }
 
-  def transformImage(originalImageBuffer:Mat,
-                     binaryImageBuffer:Mat,
-                     destinationImageFile:File):Boolean = {
-    val destinationImage = ImageUtils.getMat(originalImageBuffer.rows(), originalImageBuffer.cols())
+  private def getFileSearchString(file:File) = s"${file.getParentFile.getName}/${file.getName}"
 
-    fileManagerService.writeImage(destinationImage, destinationImageFile)
+  private def getLeafPixelPercentage(transformedImageMat:Mat, binaryImageMat:Mat):Double = {
+    val pixels = extractSurroundingPixels(binaryImageMat,radius)
+    pixels.map(px => arrayToColoredPixel(binaryImageMat, px.row, px.col)).filter(_.isVoid).size / pixels.size.toDouble
   }
+
 }

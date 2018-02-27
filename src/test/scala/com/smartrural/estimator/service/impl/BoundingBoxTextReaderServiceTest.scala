@@ -13,7 +13,7 @@ class BoundingBoxTextReaderServiceTest extends FlatSpec{
 
   System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
 
-  val bboxFilePath = s"inferences_info/valdemonjas-2017-09-13_01/${AppConstants.BbBoxesFileName}"
+  val bboxFilePath = s"bbox_info/valdemonjas-2017-09-13_01/${AppConstants.BbBoxesFileName}"
 
   behavior of "BoundingBoxTextReader"
 
