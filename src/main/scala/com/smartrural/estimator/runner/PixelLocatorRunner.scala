@@ -22,14 +22,14 @@ class PixelLocatorRunner(inferencesInfoFile:File,
 
   override def run():Boolean =
     getChildList(reconstructedImagesPath)
-      .map(file => calculateVineYieldParam(file, readImage(file)))
+      .flatMap(file => calculateVineYieldParam(file, readImage(file)))
       .map(vineYieldResult => writeObjAsLineToFile(vineYieldResult, destinationResultFile))
       .foldLeft(true)(_ & _)
 
   private def calculateVineYieldParam(transformedImageFile: File,
                                       transformedImageMat: Mat):Option[VineYieldParameters] = {
-    val binaryImageBuffer = readImage(getMirrorImageFile(transformedImageFile, reconstructedImagesPath))
-    val percentage = getLeafPixelPercentage(transformedImageMat, binaryImageBuffer)
+    val reconstructedImageMat = readImage(getMirrorImageFile(transformedImageFile, reconstructedImagesPath))
+    val percentage = getLeafPixelPercentage(transformedImageMat, reconstructedImageMat)
     val searchFileName = getFileSearchString(transformedImageFile)
 
     inferenceService
@@ -39,8 +39,8 @@ class PixelLocatorRunner(inferencesInfoFile:File,
 
   private def getFileSearchString(file:File) = s"${file.getParentFile.getName}/${file.getName}"
 
-  private def getLeafPixelPercentage(transformedImageMat:Mat, binaryImageMat:Mat): Double = {
-    val listPositions = extractSurroundingLeafCoordinates(transformedImageMat, binaryImageMat)
+  private def getLeafPixelPercentage(transformedImageMat:Mat, reconstructedImageMat:Mat): Double = {
+    val listPositions = extractSurroundingLeafCoordinates(transformedImageMat, reconstructedImageMat)
 
     val transformedImagePixelsWithIndex =
       getMatAsColoredPixels(transformedImageMat).zipWithIndex.filter(tp => listPositions.contains(tp._2)).map(_._1)
@@ -49,7 +49,7 @@ class PixelLocatorRunner(inferencesInfoFile:File,
     else transformedImagePixelsWithIndex.filter(_.isNotVoid()).size / transformedImagePixelsWithIndex.size.toDouble
   }
 
-  private def extractSurroundingLeafCoordinates(transformedImageMat:Mat, binaryImageMat: Mat) =
-    extractAllSurroundingVoidPixelsFromImage(binaryImageMat, radius)
+  private def extractSurroundingLeafCoordinates(transformedImageMat:Mat, reconstructedImageMat: Mat) =
+    extractAllSurroundingVoidPixelsFromImage(reconstructedImageMat, radius)
       .map(px => getListPositionByCoordinate(transformedImageMat.cols, px.row, px.col))
 }

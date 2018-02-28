@@ -9,6 +9,7 @@ import org.apache.commons.io.filefilter.TrueFileFilter
 import org.junit.runner.RunWith
 import org.opencv.core.Core
 import org.opencv.imgcodecs.Imgcodecs
+import org.scalamock.matchers.MockParameter
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 import org.scalatest.junit.JUnitRunner
@@ -44,14 +45,17 @@ class PixelLocatorRunnerTest extends FlatSpec with MockFactory{
 
 
   def setExpectations1():Unit= {
-    val result =VineYieldParameters("test-classes/FilteredImage1.png", 1,-4.283807,41.623104,36,10,0.5)
+    val result:MockParameter[Any] =
+      VineYieldParameters("test-classes/FilteredImage1.png", 1,-4.283807,41.623104,36,10, 0.5)
+    val mockResultFile:MockParameter[File] = resultFile
+
     (fileManager.getChildList _)
       .expects(rootPath, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE)
       .returns(Array(filteredImageFile1)).anyNumberOfTimes()
     (fileManager.readImage _).expects(filteredImageFile1).returns(filteredImageMat1)
     (fileManager.getMirrorImageFile _).expects(*, *).returns(inferenceImageFile)
     (fileManager.readImage _).expects(inferenceImageFile).returns(inferenceImageMat)
-    (fileManager.writeObjAsLineToFile _).expects(*, resultFile).returns(true).once
+    (fileManager.writeObjAsLineToFile _).expects(result, mockResultFile).returns(true).once
 
     (inferenceService.getInferenceByPictureName _)
       .expects(inferencesFile, "test-classes/FilteredImage1.png")
@@ -62,14 +66,17 @@ class PixelLocatorRunnerTest extends FlatSpec with MockFactory{
   }
 
   def setExpectations2():Unit= {
-    val result =VineYieldParameters("test-classes/FilteredImage2.png", 1,-4.283807,41.623104,36,10,0.5)
+    val result:MockParameter[Any] =
+      VineYieldParameters("test-classes/FilteredImage2.png", 1,-4.283807,41.623104,36,10, 0.25)
+    val mockResultFile:MockParameter[File] = resultFile
+
     (fileManager.getChildList _)
       .expects(rootPath, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE)
       .returns(Array(filteredImageFile2)).anyNumberOfTimes()
     (fileManager.readImage _).expects(filteredImageFile2).returns(filteredImageMat2)
     (fileManager.getMirrorImageFile _).expects(*, *).returns(inferenceImageFile)
     (fileManager.readImage _).expects(inferenceImageFile).returns(inferenceImageMat)
-    (fileManager.writeObjAsLineToFile _).expects(*, resultFile).returns(true).once
+    (fileManager.writeObjAsLineToFile _).expects(result, mockResultFile).returns(true).once
 
     (inferenceService.getInferenceByPictureName _)
       .expects(inferencesFile, "test-classes/FilteredImage2.png")
