@@ -23,7 +23,7 @@ class ImageFilterRunnerTest extends FlatSpec with MockFactory{
   val fileManager = new LocalFileManager
 
   val boundingBoxService = mock[BoundingBoxService]
-  (boundingBoxService.getDistinctImages _).expects(*).onCall{(x:File) => (x, Set("z-img-000-000004.jpg"))}.once
+  (boundingBoxService.getDistinctImages _).expects(*).onCall{(x:File) => (x.getName, Set("z-img-000-000004.jpg"))}.once
 
   val rootPathFile = new File(getClass.getClassLoader.getResource(".").getPath)
 

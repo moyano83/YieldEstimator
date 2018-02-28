@@ -1,8 +1,7 @@
-package com.smartrural.estimator.util
+package com.smartrural.estimator.service.impl
 
 import java.io.File
 
-import com.smartrural.estimator.service.impl.LocalFileManager
 import org.junit.runner.RunWith
 import org.opencv.core.Core
 import org.scalatest.FlatSpec
@@ -33,11 +32,7 @@ class LocalFileManagerTest extends FlatSpec{
 
   it should "List all the child files" in {
     val inferencesFolder = fileManagerService.getChildList(inferencesPath)
-    assert(inferencesFolder.size == 1)
-    assert(inferencesFolder.head.getName == partition)
-
-    val picturesList = fileManagerService.getChildList(inferencesFolder.head.getPath)
-    assert(picturesList.size == 7)
+    assert(inferencesFolder.size == 7)
   }
 
   it should "find the mirror image" in{

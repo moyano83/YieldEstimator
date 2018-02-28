@@ -23,7 +23,7 @@ class GaussianFilterTransformerTest extends FlatSpec with MockFactory{
 
   val image = new File(rootPathFile, "original_images/valdemonjas-2017-09-13_01/z-img-000-000004.jpg")
 
-  val filter = new GaussianFilterTransformer(6, 1)
+  val filter = new GaussianFilterTransformer(5, 1)
 
   behavior of "GaussianFilterTransformer"
 

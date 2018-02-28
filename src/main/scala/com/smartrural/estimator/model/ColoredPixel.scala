@@ -15,6 +15,8 @@ case class ColoredPixel(rgbColor:Int, row:Int, col:Int) {
 
   def isVoid():Boolean = (red == 0) && (green ==0) && (blue == 0)
 
+  def isNotVoid():Boolean = !isVoid()
+
   override def hashCode(): Int = blue
 
   override def canEqual(that: Any): Boolean = that match{

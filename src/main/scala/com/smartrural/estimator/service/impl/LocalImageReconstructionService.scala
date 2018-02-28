@@ -1,11 +1,12 @@
 package com.smartrural.estimator.service.impl
 
-import java.io.{File, FilenameFilter}
+import java.io.File
 
-import com.smartrural.estimator.model.{ColoredPixel, BBoxItemInfo}
+import com.smartrural.estimator.model.{BBoxItemInfo, ColoredPixel}
 import com.smartrural.estimator.service.{FileManagerService, ImageReconstructionService}
 import com.smartrural.estimator.util.AppConstants.{RedColor, VoidColor}
 import com.smartrural.estimator.util.ImageUtils._
+import org.apache.commons.io.filefilter.IOFileFilter
 import org.opencv.core.Mat
 import scaldi.{Injectable, Injector}
 
@@ -31,13 +32,13 @@ class LocalImageReconstructionService(implicit inj:Injector) extends ImageRecons
   }
 
   def retrievePatchesForImage(patchesPath:String, imageName:String):List[Mat] ={
-    val fileFilter = new FilenameFilter {
-      override def accept(dir: File, name: String): Boolean =
-        name.startsWith(imageName.substring(0, imageName.lastIndexOf(".")).concat("_"))
+    val fileFilter = new IOFileFilter {
+      override def accept(file: File) =
+        file.getName.startsWith(imageName.substring(0, imageName.lastIndexOf(".")).concat("_"))
+      override def accept(dir: File, name: String) = accept(new File(dir, name))
     }
-    fileManager.getChildList(patchesPath)
-      .filter(file => fileFilter.accept(file, file.getName))
-      .map(patchFile => fileManager.readImage(patchFile)).toList
+
+    fileManager.getChildList(patchesPath, fileFilter).map(patchFile => fileManager.readImage(patchFile)).toList
   }
 
   def createCompleteBinaryImage(patchImagesList: List[Mat],

@@ -29,7 +29,7 @@ object ImageReconstructionApp {
     val bboxesPath = properties.getProperty(AppConstants.PropertyBBoxesPath)
     val originalImagesPath = properties.getProperty(AppConstants.PropertyOriginalImagePath)
     val patchImgPath = properties.getProperty(AppConstants.PropertyPatchesPath)
-    val destinationPath = properties.getProperty(AppConstants.DestinationPath)
+    val destinationPath = properties.getProperty(AppConstants.PropertyDestinationPath)
 
     new ImageReconstructionRunner(bboxesPath, originalImagesPath, patchImgPath, destinationPath).run
   }

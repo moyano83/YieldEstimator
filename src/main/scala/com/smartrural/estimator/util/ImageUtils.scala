@@ -2,11 +2,10 @@ package com.smartrural.estimator.util
 
 import java.lang.Math.{max, min}
 
-import com.smartrural.estimator.model.{ColoredPixel, BBoxItemInfo}
+import com.smartrural.estimator.model.ColoredPixel
 import com.smartrural.estimator.util.AppConstants.ZeroCoordinate
 import org.opencv.core.{Core, CvType, Mat}
 import org.opencv.imgproc.Imgproc
-
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
 
@@ -37,29 +36,46 @@ object ImageUtils {
     }
   }
 
+  def getMatAsListOfColouredPixels(img:Mat):List[ColoredPixel] =
+    (for {row <- ZeroCoordinate until img.rows();
+          col <- ZeroCoordinate until img.cols();
+          pixel = arrayToColoredPixel(img, row, col)
+  } yield pixel).toList
+
+  def getListPositionByCoordinate(maxCols:Int, row:Int, col:Int):Int = (row + col * maxCols)
   /**
     * Gets the list of the surrounding pixels by radius
     * @param img the image
     * @param radius the radiuls
     * @return the list of surrounding pixels
     */
-  def extractSurroundingPixels(img:Mat, radius:Int):Set[ColoredPixel] =
-    (for {row <- ZeroCoordinate to img.rows();
-                          col <- ZeroCoordinate to img.cols();
-                          pixel = arrayToColoredPixel(img, row, col) if pixel != AppConstants.VoidColor
-    } yield extractSurroundingPixels(img, radius, pixel)).flatten.toSet
+  def extractAllSurroundingVoidPixelsFromImage(img:Mat, radius:Int):Set[ColoredPixel] = {
+    val allPixels = getMatAsListOfColouredPixels(img)
+    allPixels
+      .filter(_.isNotVoid())
+      .map(pixel => extractSurroundingCoordinates(img.rows, img.cols, radius, pixel, allPixels))
+      .flatten
+      .toSet
+      .filter(_.isVoid())
+  }
 
   /**
     * Gets the list of the surrounding pixels by radius
-    * @param img the image
+    * @param maxRows upper limit for rows
+    * @param maxCols upper limit for cols
     * @param radius the radiuls
     * @param pixel the central pixel
     * @return the list of surrounding pixels
     */
-  def extractSurroundingPixels(img:Mat, radius:Int, pixel:ColoredPixel):Set[ColoredPixel] =
-    (for { x <- max(pixel.row - radius, ZeroCoordinate) to min(pixel.row + radius, img.width() - 1);
-           y <- max(pixel.col - radius, ZeroCoordinate) to min(pixel.col + radius, img.height() - 1)
-    } yield arrayToColoredPixel(img,x,y)).toSet
+  private def extractSurroundingCoordinates(maxRows:Int,
+                                            maxCols:Int,
+                                            radius:Int,
+                                            pixel:ColoredPixel,
+                                            allPixels:List[ColoredPixel]):List[ColoredPixel] =
+    (for { row <- max(pixel.row - radius, ZeroCoordinate) to min(pixel.row + radius, maxRows -1);
+           col <- max(pixel.col - radius, ZeroCoordinate) to min(pixel.col + radius, maxCols -1)
+      position = getListPositionByCoordinate(maxCols, row, col)
+    } yield allPixels(position)).toList
 
   /**
     * Wrapper for the cvtColor method
@@ -100,9 +116,9 @@ object ImageUtils {
     * @return the list of colored pixels
     */
   def getMatAsColoredPixels(img:Mat):List[ColoredPixel] =
-    (for (y <- 0 until img.width();
-         x <- 0 until img.height()
-    ) yield ImageUtils.arrayToColoredPixel(img, x, y)).toList
+    (for (row <- 0 until img.rows();
+         col <- 0 until img.cols()
+    ) yield ImageUtils.arrayToColoredPixel(img, row, col)).toList
 
   /**
     * Gets a new mat
@@ -114,7 +130,7 @@ object ImageUtils {
     val mat = new Mat(rows, cols, CvType.CV_8UC3)
     for(x<-0 until rows;
         y<-0 until cols){
-      mat.put(x,y,AppConstants.VoidColor)
+      mat.put(x, y, AppConstants.VoidColor)
     }
     mat
   }

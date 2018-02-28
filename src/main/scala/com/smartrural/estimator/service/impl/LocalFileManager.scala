@@ -4,7 +4,7 @@ import java.io.File
 
 import com.smartrural.estimator.service.FileManagerService
 import org.apache.commons.io.FileUtils
-import org.apache.commons.io.filefilter.WildcardFileFilter
+import org.apache.commons.io.filefilter.IOFileFilter
 import org.opencv.core.Mat
 import org.opencv.imgcodecs.Imgcodecs
 import org.slf4j.LoggerFactory
@@ -19,8 +19,8 @@ class LocalFileManager extends FileManagerService{
 
   private val logger = LoggerFactory.getLogger(getClass)
 
-  override def getChildList(path:String):Array[File] =
-    new File(path).list(new WildcardFileFilter("*")).map(file=>new File(path, file)).sortBy(_.getName)
+  override def getChildList(path:String, filter: IOFileFilter, dirFilter: IOFileFilter):Array[File] =
+    FileUtils.listFiles(new File(path), filter, dirFilter).toArray[File](Array()).sortBy(_.getName)
 
   override def getMirrorImageFile(imageToMirror:File, mirrorBasePath:String):File = {
     val imageName = imageToMirror.getName

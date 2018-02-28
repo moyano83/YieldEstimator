@@ -25,27 +25,19 @@ class ImageFilterRunner(bboxesPath:String,
 
   override def run(): Boolean = fileManagerService
       .getChildList(bboxesPath)
-      .flatMap(getBboxesFile)
       .map(bboxService.getDistinctImages)
-      .flatMap{case(bboxFile, fileSet) => getImagesFromSetAndBbxFile(bboxFile, fileSet)}
+      .flatMap{case(partition, fileSet) => getImagesFromSetAndBbxFile(partition, fileSet)}
       .map(runTransformers)
       .reduce(_ & _)
 
-
-
-  def getImagesFromSetAndBbxFile(bboxFile:File, imageNames:Set[String]):Set[File] ={
-    val partition = bboxFile.getParentFile.getName
-    imageNames.map(image => fileManagerService.getComposedFile(List(originalImagesPath, partition, image)))
-  }
   /**
-    * Gets the list of child files
-    * @param partition the partition to look for files
-    * @return the child list
+    * Gets the set of images
+    * @param partition
+    * @param imageNames
+    * @return
     */
-  def getBboxesFile(partition:File):List[File] = {
-    if(partition.isFile && !partition.isDirectory) List(partition)
-    else fileManagerService.getChildList(partition.getAbsolutePath).flatMap(getBboxesFile).toList
-  }
+  def getImagesFromSetAndBbxFile(partition:String, imageNames:Set[String]):Set[File] =
+    imageNames.map(image => fileManagerService.getComposedFile(List(originalImagesPath, partition, image)))
 
   /**
     * Applies the transformer list to the image and saves the result in the mirror path destination

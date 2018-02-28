@@ -19,22 +19,19 @@ class ImageReconstructionRunner(bboxesPath:String,
 
   override def run() = fileManagerService
       .getChildList(bboxesPath)
-      .map(partition => reconstructImagesPerPartition(partition.getName))
+      .map(reconstructImagesPerPartition)
       .foldLeft(true)(_ & _)
 
-  def reconstructImagesPerPartition(partition:String):Boolean = fileManagerService
-    .getChildList(new File(bboxesPath, partition).getAbsolutePath)
-    .filter(_.getName == AppConstants.BbBoxesFileName)
-    .map(bboxFile => boundingBoxService.readBBoxFile(bboxFile))
-    .flatMap(imageMap =>
-      imageMap.map { case (image, inferenceList) =>
+  def reconstructImagesPerPartition(bboxFile:File):Boolean =
+    boundingBoxService.readBBoxFile(bboxFile)
+    .map({case (image, inferenceList) =>{
+      val partition = bboxFile.getParentFile.getName
         imageReconstructionService.reconstructImage(
           fileManagerService.getComposedFile(List(originalImagesPath, partition, image)),
           inferenceList,
           fileManagerService.getComposedFile(List(patchImgPath, partition)),
-          fileManagerService.getComposedFile(List(destinationPath, partition))
-        )
+          fileManagerService.getComposedFile(List(destinationPath, partition)))
       }
-    ).foldLeft(true)(_ & _)
+    }).foldLeft(true)(_ & _)
 
 }

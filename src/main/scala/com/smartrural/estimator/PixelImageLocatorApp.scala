@@ -3,6 +3,9 @@ package com.smartrural.estimator
 import java.io.{File, FileInputStream}
 import java.util.Properties
 
+import com.smartrural.estimator.di.PixelLocatorModule
+import com.smartrural.estimator.runner.PixelLocatorRunner
+import com.smartrural.estimator.util.AppConstants._
 import org.opencv.core.Core
 import org.slf4j.LoggerFactory
 
@@ -22,7 +25,15 @@ object PixelImageLocatorApp {
     val properties = new Properties()
     properties.load(new FileInputStream(new File(args(0))))
 
-    val
+    val inferencesFile = new File(properties.getProperty(PropertyInferencesFile))
+    val transformedImagePath = properties.getProperty(PropertyFilteredImagePath)
+    val reconstructedImagePath = properties.getProperty(PropertyReconstructedImagePath)
+    val destinationFile = new File(properties.getProperty(PropertyDestinationPath))
+    val radius = properties.getProperty(PropertyRadiusPixelLocator).toInt
+
+    implicit val module = new PixelLocatorModule
+
+    new PixelLocatorRunner(inferencesFile, transformedImagePath, reconstructedImagePath, destinationFile, radius).run
   }
 
 

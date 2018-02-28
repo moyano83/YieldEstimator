@@ -26,6 +26,18 @@ object AppConstants {
   /**
     * Property containing the path to the patch images
     */
+  val PropertyInferencesFile = "inferences.file.path"
+  /**
+    * Property containing the path to the filtered images
+    */
+  val PropertyFilteredImagePath = "filtered.image.path"
+  /**
+    * Property containing the path to the reconstructed binary images
+    */
+  val PropertyReconstructedImagePath = "reconstructed.image.path"
+  /**
+    * Property containing the path to the patch images
+    */
   val PropertyPatchesPath = "patch.image.path"
   /**
     * Property containing the path to the original images
@@ -38,19 +50,19 @@ object AppConstants {
   /**
     * Property containing the destination path
     */
-  val DestinationPath = "destination.file.path"
+  val PropertyDestinationPath = "destination.file.path"
   /**
     * Property containing the destination path
     */
-  val BinaryImagesPath = "binary.images.path"
+  val PropertyBinaryImagesPath = "binary.images.path"
   /**
     * Property containing the destination path
     */
-  val RadiusPixelLocator = "radius.pixel.locator"
+  val PropertyRadiusPixelLocator = "radius.pixel.locator"
   /**
     * Minimum value for hue
     */
-  val HueMinValue = "hue.min.value"
+  val PropertyHueMinValue = "hue.min.value"
   /**
     * Maximum value for hue
     */
@@ -58,37 +70,37 @@ object AppConstants {
   /**
     * Minimum value for saturation
     */
-  val SaturationMinValue = "saturation.min.value"
+  val PropertySaturationMinValue = "saturation.min.value"
   /**
     * Maximum value for saturation
     */
-  val SaturationMaxValue = "saturation.max.value"
+  val PropertySaturationMaxValue = "saturation.max.value"
   /**
     * Minimum value for brightness
     */
-  val BrightnessMinValue = "brightness.min.value"
+  val PropertyBrightnessMinValue = "brightness.min.value"
   /**
     * Maximum value for brightness
     */
-  val BrightnessMaxValue = "brightness.max.value"
+  val PropertyBrightnessMaxValue = "brightness.max.value"
   /**
     * Gauss Sigma value property name
     */
-  val GaussSigmaValue = "gauss.sigma.value"
+  val PropertyGaussSigmaValue = "gauss.sigma.value"
   /**
     * Gauss number of iterations property name
     */
-  val GaussIterationsValue = "gauss.iterations.value"
+  val PropertyGaussIterationsValue = "gauss.iterations.value"
   /**
     * JPG Format
     */
-  val JpgFormat = "jpg"
+  val FormatJpg = "jpg"
   /**
     * PNG format
     */
-  val PngFormat = "png"
+  val FormatPng = "png"
   /**
     * BMP format
     */
-  val BmpFormat = "BMP"
+  val FormatBmp = "BMP"
 }
