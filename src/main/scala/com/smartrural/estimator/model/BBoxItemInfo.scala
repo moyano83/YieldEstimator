@@ -1,7 +1,5 @@
 package com.smartrural.estimator.model
 
-import com.smartrural.estimator.util.ImageUtils
-
 case class BBoxItemInfo(imageName:String,
                         matchType:String,
                         matchProbability:Double,
@@ -17,6 +15,4 @@ case class BBoxItemInfo(imageName:String,
   def getColAdjusted(col:Int):Int = colMin + col
 
   def getRowAdjusted(row:Int):Int = rowMin + row
-
-  def getResolution(): String = ImageUtils.getFormattedResolution(RowMaxRange, ColMaxRange)
 }

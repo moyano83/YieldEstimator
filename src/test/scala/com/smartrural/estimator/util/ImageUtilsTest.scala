@@ -21,10 +21,6 @@ class ImageUtilsTest extends FlatSpec{
 
   behavior of "ImageUtils"
 
-  it should "get the formatted resolution" in {
-    assert(getFormattedResolution(13, 12) == "13 x 12")
-  }
-
   it should "find the surrounding non void pixels" in {
     val img = Imgcodecs.imread(new File(rootPathFile, "Image.png").getAbsolutePath)
     val pixels = extractAllSurroundingVoidPixelsFromImage(img, 2)

@@ -17,7 +17,7 @@ object ImageTransformApp {
   def main(args:Array[String]):Unit = {
 
     if(args.length!=1) {
-      logger.error("Invalid number of parameters. USAGE: 'com.smartrural.estimator.PixelmageLocatorApp <Conf_path>'")
+      logger.error("Invalid number of parameters. USAGE: 'com.smartrural.estimator.ImageTransformApp <Conf_path>'")
       System.exit(1)
     }
     System.loadLibrary(Core.NATIVE_LIBRARY_NAME)

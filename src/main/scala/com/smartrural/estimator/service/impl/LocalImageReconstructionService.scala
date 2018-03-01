@@ -45,18 +45,18 @@ class LocalImageReconstructionService(implicit inj:Injector) extends ImageRecons
                                 inferenceInfoList:List[BBoxItemInfo],
                                 destinationImage: Mat,
                                 destinationFile: File): Boolean = {
-    patchImagesList.foreach(patchImage => {
-      findMatchingInfoByResolution(inferenceInfoList, getFormattedResolution(patchImage.rows, patchImage.cols))
-        .map(info => writeInferenceImagePixels(patchImage, info, destinationImage))
+    inferenceInfoList.foreach(inferenceInfo => {
+      findMatchingMatByResolution(patchImagesList, inferenceInfo)
+        .map(mat => writeInferenceImagePixels(mat, inferenceInfo, destinationImage))
     })
 
     if(patchImagesList.isEmpty) false
     else fileManager.writeImage(destinationImage, destinationFile)
   }
 
-  private def findMatchingInfoByResolution(inferenceInfoList:List[BBoxItemInfo],
-                                           resolution:String):Option[BBoxItemInfo] =
-    inferenceInfoList.find(_.getResolution == resolution)
+  private def findMatchingMatByResolution(patchImagesList:List[Mat],
+                                          info:BBoxItemInfo):Option[Mat] =
+    patchImagesList.find(mat => mat.rows == info.RowMaxRange && mat.cols == info.ColMaxRange)
 
   private def writeInferenceImagePixels(img:Mat, info:BBoxItemInfo, dst: Mat):Unit =
     getMatAsColoredPixels(img)

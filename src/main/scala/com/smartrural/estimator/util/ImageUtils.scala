@@ -15,14 +15,6 @@ import scala.collection.mutable.ArrayBuffer
 object ImageUtils {
 
   /**
-    * Gets the formated resolution for the sizes passed
-    * @param rows number of rows
-    * @param cols number of columns
-    * @return the resolution in a formatted string
-    */
-  def getFormattedResolution(rows:Int, cols:Int) = s"${rows} x ${cols}"
-
-  /**
     * gets the colored pixel from the mat corresponding to the coordinates passed
     * @param mat the image
     * @param row row coordinate

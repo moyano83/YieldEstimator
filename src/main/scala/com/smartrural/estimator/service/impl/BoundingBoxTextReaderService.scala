@@ -6,10 +6,14 @@ import com.smartrural.estimator.model.BBoxItemInfo
 import com.smartrural.estimator.service.BoundingBoxService
 import com.smartrural.estimator.util.AppConstants
 
-class BoundingBoxTextReaderService extends BoundingBoxService{
+class BoundingBoxTextReaderService(percentegeFilter:Double = 0.85) extends BoundingBoxService{
 
   override def readBBoxFile(bboxFile:File):Map[String, List[BBoxItemInfo]] =
-    scala.io.Source.fromFile(bboxFile).getLines().map(getInferenceInfoFromLine).toList.groupBy(_.imageName)
+    scala.io.Source.fromFile(bboxFile).getLines()
+      .map(getInferenceInfoFromLine)
+      .filter(_.matchProbability >= percentegeFilter)
+      .toList
+      .groupBy(_.imageName)
 
   private def getInferenceInfoFromLine(line:String):BBoxItemInfo ={
     val lineItems = line.split(" ")
