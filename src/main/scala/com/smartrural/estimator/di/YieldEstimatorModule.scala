@@ -5,7 +5,7 @@ import com.smartrural.estimator.service.impl._
 import scaldi.Module
 
 /**
-  * Created by jm186111 on 31/01/2018.
+  * Class that injects the appropriate service into the receiver classes
   */
 class YieldEstimatorModule extends Module{
     bind[BoundingBoxService] to new BoundingBoxTextReaderService

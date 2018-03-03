@@ -56,7 +56,7 @@ class LocalImageReconstructionService(implicit inj:Injector) extends ImageRecons
 
   private def findMatchingMatByResolution(patchImagesList:List[Mat],
                                           info:BBoxItemInfo):Option[Mat] =
-    patchImagesList.find(mat => mat.rows == info.RowMaxRange && mat.cols == info.ColMaxRange)
+    patchImagesList.find(mat => mat.rows == info.ImageHeight && mat.cols == info.ImageWidth)
 
   private def writeInferenceImagePixels(img:Mat, info:BBoxItemInfo, dst: Mat):Unit =
     getMatAsColoredPixels(img)

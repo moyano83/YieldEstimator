@@ -19,22 +19,37 @@ class LocalFileManager extends FileManagerService{
 
   private val logger = LoggerFactory.getLogger(getClass)
 
+  /**
+    * @inheritdoc
+    */
   override def getChildList(path:String, filter: IOFileFilter, dirFilter: IOFileFilter):Array[File] =
     FileUtils.listFiles(new File(path), filter, dirFilter).toArray[File](Array()).sortBy(_.getName)
 
+  /**
+    * @inheritdoc
+    */
   override def getMirrorImageFile(imageToMirror:File, mirrorBasePath:String):File = {
     val imageName = imageToMirror.getName
     val partitionFolder = imageToMirror.getParentFile.getName
     new File(new File(mirrorBasePath, partitionFolder), imageName)
   }
 
+  /**
+    * @inheritdoc
+    */
   override def writeImage(im: Mat, output: File): Boolean = {
     output.getParentFile.mkdirs()
     Imgcodecs.imwrite(output.getAbsolutePath, im)
   }
 
+  /**
+    * @inheritdoc
+    */
   override def readImage(input: File): Mat = Imgcodecs.imread(input.getAbsolutePath)
 
+  /**
+    * @inheritdoc
+    */
   override def writeObjAsLineToFile(obj:Any, file:File):Boolean =
     Try(FileUtils.writeLines(file, List(obj.toString), true)) match {
       case Success(_) => true
@@ -43,5 +58,4 @@ class LocalFileManager extends FileManagerService{
         false
       }
     }
-
 }

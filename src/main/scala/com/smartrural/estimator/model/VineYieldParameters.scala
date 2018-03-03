@@ -10,7 +10,12 @@ case class VineYieldParameters(pictureName:String,
                             pixels:Int,
                             cm2:Int,
                             occlusionPercentage:Double){
-
+  /**
+    * Secondary constructor
+    * @param inference
+    * @param percentage
+    * @return
+    */
   def this(inference:InferenceInfo, percentage:Double) = this(
     inference.properties.url,
     inference.properties.cartodb_id,
@@ -20,6 +25,9 @@ case class VineYieldParameters(pictureName:String,
     inference.properties.cm2,
     percentage
   )
+  /**
+    * @inheritdoc
+    */
   override def toString: String = Array(pictureName,
     cartoDBId.toString,
     latitude.toString,

@@ -7,7 +7,7 @@ import com.smartrural.estimator.transformer.ImageTransformer
 import scaldi.{Injectable, Injector}
 
 /**
-  * Created by jm186111 on 13/02/2018.
+  * Runnable that applies the different configured filters over the images found in the configured path
   */
 class ImageFilterRunner(bboxesPath:String,
                         originalImagesPath:String,
@@ -23,6 +23,9 @@ class ImageFilterRunner(bboxesPath:String,
     */
   val fileManagerService = inject[FileManagerService]
 
+  /**
+    * @inheritdoc
+    */
   override def run(): Unit = fileManagerService
       .getChildList(bboxesPath)
       .map(bboxService.getDistinctImages)
