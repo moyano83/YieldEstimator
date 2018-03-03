@@ -3,7 +3,7 @@ package com.smartrural.estimator
 import java.io.{File, FileInputStream}
 import java.util.Properties
 
-import com.smartrural.estimator.di.ImageReconstructionModule
+import com.smartrural.estimator.di.YieldEstimatorModule
 import com.smartrural.estimator.runner.ImageReconstructionRunner
 import com.smartrural.estimator.util.AppConstants
 import org.opencv.core.Core
@@ -21,7 +21,7 @@ object ImageReconstructionApp {
     }
     System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
 
-    implicit val imageReconstructionService = new ImageReconstructionModule
+    implicit val imageReconstructionService = new YieldEstimatorModule
 
     val properties = new Properties()
     properties.load(new FileInputStream(new File(args(0))))
@@ -30,6 +30,15 @@ object ImageReconstructionApp {
     val originalImagesPath = properties.getProperty(AppConstants.PropertyOriginalImagePath)
     val patchImgPath = properties.getProperty(AppConstants.PropertyPatchesPath)
     val destinationPath = properties.getProperty(AppConstants.PropertyDestinationPath)
+
+    if (Some(bboxesPath).isEmpty ||
+      Some(originalImagesPath).isEmpty ||
+      Some(patchImgPath).isEmpty ||
+      Some(destinationPath).isEmpty ){
+
+      logger.error("Invalid set of parameters to run the Image reconstruction process. Please review the configuration")
+      System.exit(1)
+    }
 
     new ImageReconstructionRunner(bboxesPath, originalImagesPath, patchImgPath, destinationPath).run
   }

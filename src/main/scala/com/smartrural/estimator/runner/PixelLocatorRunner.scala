@@ -12,7 +12,7 @@ class PixelLocatorRunner(inferencesInfoFile:File,
                          filteredImagePath:String,
                          reconstructedImagesPath:String,
                          destinationResultFile:File,
-                         radius:Int)(implicit inj:Injector) extends Injectable with Runner {
+                         radius:Int)(implicit inj:Injector) extends Injectable with Runnable {
 
   val fileManagerService = inject[FileManagerService]
 
@@ -20,11 +20,10 @@ class PixelLocatorRunner(inferencesInfoFile:File,
 
   import fileManagerService._
 
-  override def run():Boolean =
+  override def run():Unit =
     getChildList(reconstructedImagesPath)
       .flatMap(file => calculateVineYieldParam(file, readImage(file)))
-      .map(vineYieldResult => writeObjAsLineToFile(vineYieldResult, destinationResultFile))
-      .foldLeft(true)(_ & _)
+      .foreach(vineYieldResult => writeObjAsLineToFile(vineYieldResult, destinationResultFile))
 
   private def calculateVineYieldParam(transformedImageFile: File,
                                       transformedImageMat: Mat):Option[VineYieldParameters] = {

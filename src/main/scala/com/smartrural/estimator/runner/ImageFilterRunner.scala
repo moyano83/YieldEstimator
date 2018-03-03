@@ -13,7 +13,7 @@ class ImageFilterRunner(bboxesPath:String,
                         originalImagesPath:String,
                         destinationImagesPath:String,
                         listFilters:List[ImageTransformer])(implicit inj: Injector)
-  extends Runner with Injectable{
+  extends Runnable with Injectable{
   /**
     * BBox service
     */
@@ -23,12 +23,23 @@ class ImageFilterRunner(bboxesPath:String,
     */
   val fileManagerService = inject[FileManagerService]
 
-  override def run(): Boolean = fileManagerService
+  override def run(): Unit = fileManagerService
       .getChildList(bboxesPath)
       .map(bboxService.getDistinctImages)
       .flatMap{case(partition, fileSet) => getImagesFromSetAndBbxFile(partition, fileSet)}
-      .map(runTransformers)
-      .reduce(_ & _)
+      .foreach(runTransformers)
+
+
+  /**
+    * Applies the transformer list to the image and saves the result in the mirror path destination
+    * @param image the image to transform
+    * @return a boolean with the operation
+    */
+  def runTransformers(image:File):Unit = {
+    import fileManagerService._
+    val resultImg = listFilters.foldLeft(readImage(image))((img, transformer) => transformer.applyTransform(img))
+    writeImage(resultImg, getMirrorImageFile(image, destinationImagesPath))
+  }
 
   /**
     * Gets the set of images
@@ -38,15 +49,4 @@ class ImageFilterRunner(bboxesPath:String,
     */
   def getImagesFromSetAndBbxFile(partition:String, imageNames:Set[String]):Set[File] =
     imageNames.map(image => fileManagerService.getComposedFile(List(originalImagesPath, partition, image)))
-
-  /**
-    * Applies the transformer list to the image and saves the result in the mirror path destination
-    * @param image the image to transform
-    * @return a boolean with the operation
-    */
-  def runTransformers(image:File):Boolean = {
-    import fileManagerService._
-    val resultImg = listFilters.foldLeft(readImage(image))((img, transformer) => transformer.applyTransform(img))
-    writeImage(resultImg, getMirrorImageFile(image, destinationImagesPath))
-  }
 }

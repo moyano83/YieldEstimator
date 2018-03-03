@@ -7,8 +7,9 @@ import scaldi.Module
 /**
   * Created by jm186111 on 31/01/2018.
   */
-class ImageReconstructionModule extends Module{
+class YieldEstimatorModule extends Module{
     bind[BoundingBoxService] to new BoundingBoxTextReaderService
     bind[ImageReconstructionService] to new LocalImageReconstructionService()
     bind[FileManagerService] to new LocalFileManager
+    bind[InferenceService] to new LocalInferenceService
 }

@@ -9,7 +9,7 @@ import scaldi.{Injectable, Injector}
 class ImageReconstructionRunner(bboxesPath:String,
                                 originalImagesPath:String,
                                 patchImgPath:String,
-                                destinationPath:String)(implicit inj:Injector) extends Injectable with Runner{
+                                destinationPath:String)(implicit inj:Injector) extends Injectable with Runnable{
 
   val imageReconstructionService = inject[ImageReconstructionService]
 
@@ -17,10 +17,10 @@ class ImageReconstructionRunner(bboxesPath:String,
 
   val boundingBoxService = inject[BoundingBoxService]
 
-  override def run() = fileManagerService
+  override def run():Unit = fileManagerService
       .getChildList(bboxesPath)
-      .map(reconstructImagesPerPartition)
-      .foldLeft(true)(_ & _)
+      .foreach(reconstructImagesPerPartition)
+
 
   def reconstructImagesPerPartition(bboxFile:File):Boolean =
     boundingBoxService.readBBoxFile(bboxFile)

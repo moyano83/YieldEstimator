@@ -3,7 +3,7 @@ package com.smartrural.estimator
 import java.io.{File, FileInputStream}
 import java.util.Properties
 
-import com.smartrural.estimator.di.ImageReconstructionModule
+import com.smartrural.estimator.di.YieldEstimatorModule
 import com.smartrural.estimator.runner.ImageFilterRunner
 import com.smartrural.estimator.transformer.{AvgBlurFilterTransformer, GaussianFilterTransformer, HueFilterImageTransformer}
 import com.smartrural.estimator.util.AppConstants._
@@ -46,13 +46,23 @@ object ImageTransformApp {
 
     val sigmaValue = Option(properties.getProperty(PropertyGaussSigmaValue)).map(_.toInt).getOrElse(1)
 
-    implicit val appModule = new ImageReconstructionModule
+    implicit val appModule = new YieldEstimatorModule
 
     val listFilters = List(
       new GaussianFilterTransformer(radius, sigmaValue),
       new AvgBlurFilterTransformer(radius),
       new HueFilterImageTransformer(hueRange, saturationRange, brightnessRange)
     )
+
+    if (Some(bboxesPath).isEmpty ||
+      Some(originalImagesPath).isEmpty ||
+      Some(destinationPath).isEmpty ||
+      Some(radius).isEmpty ||
+      Some(sigmaValue).isEmpty ){
+
+      logger.error("Invalid set of parameters to run the Image transform process. Please review the configuration")
+      System.exit(1)
+    }
 
     new ImageFilterRunner(bboxesPath, originalImagesPath, destinationPath, listFilters).run
   }

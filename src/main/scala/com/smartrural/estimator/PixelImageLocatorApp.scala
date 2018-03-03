@@ -3,7 +3,7 @@ package com.smartrural.estimator
 import java.io.{File, FileInputStream}
 import java.util.Properties
 
-import com.smartrural.estimator.di.PixelLocatorModule
+import com.smartrural.estimator.di.YieldEstimatorModule
 import com.smartrural.estimator.runner.PixelLocatorRunner
 import com.smartrural.estimator.util.AppConstants._
 import org.opencv.core.Core
@@ -31,7 +31,17 @@ object PixelImageLocatorApp {
     val destinationFile = new File(properties.getProperty(PropertyDestinationPath))
     val radius = properties.getProperty(PropertyRadiusPixelLocator).toInt
 
-    implicit val module = new PixelLocatorModule
+    implicit val module = new YieldEstimatorModule
+
+    if (Some(inferencesFile).isEmpty ||
+      Some(transformedImagePath).isEmpty ||
+      Some(reconstructedImagePath).isEmpty ||
+      Some(destinationFile).isEmpty ||
+      Some(radius).isEmpty ){
+
+      logger.error("Invalid set of parameters to run the Pixel locator process. Please review the configuration")
+      System.exit(1)
+    }
 
     new PixelLocatorRunner(inferencesFile, transformedImagePath, reconstructedImagePath, destinationFile, radius).run
   }
