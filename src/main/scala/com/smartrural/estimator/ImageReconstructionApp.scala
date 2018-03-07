@@ -9,7 +9,11 @@ import com.smartrural.estimator.util.AppConstants
 import org.opencv.core.Core
 import org.slf4j.LoggerFactory
 
-object ImageReconstructionApp {
+/**
+  * Application that reconstructs a binary image (only black and red pixels) from the partial inference pictures and
+  * the inference information available
+  */
+  object ImageReconstructionApp {
 
   val logger = LoggerFactory.getLogger(getClass)
 
@@ -29,7 +33,7 @@ object ImageReconstructionApp {
     val bboxesPath = properties.getProperty(AppConstants.PropertyBBoxesPath)
     val originalImagesPath = properties.getProperty(AppConstants.PropertyOriginalImagePath)
     val patchImgPath = properties.getProperty(AppConstants.PropertyPatchesPath)
-    val destinationPath = properties.getProperty(AppConstants.PropertyDestinationPath)
+    val destinationPath = properties.getProperty(AppConstants.PropertyReconstructedImagesPath)
 
     if (Some(bboxesPath).isEmpty ||
       Some(originalImagesPath).isEmpty ||
@@ -40,6 +44,9 @@ object ImageReconstructionApp {
       System.exit(1)
     }
 
-    new ImageReconstructionRunner(bboxesPath, originalImagesPath, patchImgPath, destinationPath).run
+    val runner = new ImageReconstructionRunner(bboxesPath, originalImagesPath, patchImgPath, destinationPath)
+
+    val appThread = new Thread(runner)
+    appThread.start()
   }
 }

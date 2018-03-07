@@ -13,18 +13,31 @@ import scala.collection.JavaConversions._
 /**
   * Created by jm186111 on 27/02/2018.
   */
-class LocalInferenceService extends InferenceService{
+class InferenceServiceImpl extends InferenceService{
 
+  /**
+    * list of inference info to be read only once
+    */
   private[this] var inferences: Option[List[InferenceInfo]] = None
-
+  /**
+    * The implicit to write the file
+    */
   implicit val formats = DefaultFormats
 
-  def readInferencesFile(inferencesFilePath:File):List[InferenceInfo] ={
+  /**
+    * @inheritdoc
+    */
+  override def readInferencesFile(inferencesFilePath:File):List[InferenceInfo] ={
     if (!inferences.isDefined){
       inferences = Some(FileUtils.readLines(inferencesFilePath, StandardCharsets.UTF_8).map(parseInfo).toList)
     }
     inferences.get
   }
 
+  /**
+    * parses the string line into an object of type InferenceInfo
+    * @param line the line to parse
+    * @return the inference info
+    */
   private def parseInfo(line:String):InferenceInfo = parse(line).extract[InferenceInfo]
 }

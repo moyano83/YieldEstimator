@@ -1,13 +1,17 @@
-package com.smartrural.estimator.transformer
+package com.smartrural.estimator.transformer.impl
 
+import com.smartrural.estimator.transformer.ImageTransformer
 import com.smartrural.estimator.util.ImageUtils._
 import org.opencv.core._
 import org.opencv.imgproc.Imgproc
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
+
 /**
-  * Created by jm186111 on 13/02/2018.
+  * Histogram backprojection filter transformer
+  * @param radius the radius of the transformation
+  * @param sampleImage the image containing the object to search for
   */
 class HistogramFilterTransformer(val radius:Int, val sampleImage:Mat) extends ImageTransformer {
 
@@ -38,12 +42,9 @@ class HistogramFilterTransformer(val radius:Int, val sampleImage:Mat) extends Im
   }
 
   /**
-    * Transform an imagen according to the internal implementation of the Transformer
-    *
-    * @param originalImg the image to transform
-    * @return the transformed image
+    * @inheritdoc
     */
-  override def applyTransform(originalImg: Mat): Mat = {
+  override def transform(originalImg: Mat): Mat = {
     val originalImgHSV = getCVT(originalImg)
     val hsvt = splitPlanes(originalImgHSV)
 

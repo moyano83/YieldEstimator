@@ -25,12 +25,12 @@ class ImageReconstructionServiceTest extends FlatSpec with MockFactory{
   val imageName = "z-img-000-000004.jpg"
   val destImageName = "z-img-000-000004.png"
 
-  val bboxService = new BoundingBoxTextReaderService
+  val bboxService = new BoundingBoxServiceImpl
   implicit val inj = new Module{
     bind[BoundingBoxService] to bboxService
-    bind[FileManagerService] to new LocalFileManager
+    bind[FileManagerService] to new FileManagerServiceImpl
   }
-  val imageReconstructionService = new LocalImageReconstructionService()
+  val imageReconstructionService = new ImageReconstructionServiceImpl()
 
   behavior of "ImageReconstructionService"
 
@@ -58,7 +58,7 @@ class ImageReconstructionServiceTest extends FlatSpec with MockFactory{
     val imageFile = new File(originalImagesFolder, imageName)
     val inferences = bboxService.readBBoxFile(bboxesFolder).get(imageName).get
 
-    assert(imageReconstructionService.reconstructImage(imageFile, inferences, patchesFolder, destinationFolder))
+    imageReconstructionService.reconstructImage(imageFile, inferences, patchesFolder, destinationFolder)
     assert(new File(destinationFolder, destImageName).exists())
   }
 

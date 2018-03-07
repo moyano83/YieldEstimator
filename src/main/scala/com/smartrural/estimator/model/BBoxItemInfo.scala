@@ -28,14 +28,14 @@ case class BBoxItemInfo(imageName:String,
 
   /**
     * Method that returns the relative position of the column pass into the image this inference is located
-    * @param col the column value
+    * @param colOffset the column offset value
     * @return the relative column value
     */
-  def getColAdjusted(col:Int):Int = colMin + col
+  def getColWithOffset(colOffset:Int):Int = colMin + colOffset
   /**
     * Method that returns the relative position of the row pass into the image this inference is located
-    * @param row the row value
+    * @param rowOffset the row offset value
     * @return the relative row value
     */
-  def getRowAdjusted(row:Int):Int = rowMin + row
+  def getRowWithOffset(rowOffset:Int):Int = rowMin + rowOffset
 }

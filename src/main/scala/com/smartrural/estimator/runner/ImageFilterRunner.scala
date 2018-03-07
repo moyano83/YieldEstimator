@@ -4,7 +4,10 @@ import java.io.File
 
 import com.smartrural.estimator.service.{BoundingBoxService, FileManagerService}
 import com.smartrural.estimator.transformer.ImageTransformer
+import org.slf4j.LoggerFactory
 import scaldi.{Injectable, Injector}
+
+import scala.util.{Failure, Success, Try}
 
 /**
   * Runnable that applies the different configured filters over the images found in the configured path
@@ -14,6 +17,11 @@ class ImageFilterRunner(bboxesPath:String,
                         destinationImagesPath:String,
                         listFilters:List[ImageTransformer])(implicit inj: Injector)
   extends Runnable with Injectable{
+
+  /**
+    * Class logger
+    */
+  val logger = LoggerFactory.getLogger(getClass)
   /**
     * BBox service
     */
@@ -30,7 +38,12 @@ class ImageFilterRunner(bboxesPath:String,
       .getChildList(bboxesPath)
       .map(bboxService.getDistinctImages)
       .flatMap{case(partition, fileSet) => getImagesFromSetAndBbxFile(partition, fileSet)}
-      .foreach(runTransformers)
+      .foreach(file => {
+        Try(runTransformers(file)) match {
+          case Success(_) => logger.debug(s"Successfully processed the file=[${file.getName}]")
+          case Failure(ex) => logger.error(s"Failed to process the file=[${file.getName}]", ex)
+        }
+      })
 
 
   /**
@@ -40,8 +53,11 @@ class ImageFilterRunner(bboxesPath:String,
     */
   def runTransformers(image:File):Unit = {
     import fileManagerService._
-    val resultImg = listFilters.foldLeft(readImage(image))((img, transformer) => transformer.applyTransform(img))
-    writeImage(resultImg, getMirrorImageFile(image, destinationImagesPath))
+    val destinationFile = getMirrorImageFile(image, destinationImagesPath)
+    if(!destinationFile.exists()) {
+      val resultImg = listFilters.foldLeft(readImage(image))((img, transformer) => transformer.transform(img))
+      writeImage(resultImg, destinationFile)
+    }
   }
 
   /**

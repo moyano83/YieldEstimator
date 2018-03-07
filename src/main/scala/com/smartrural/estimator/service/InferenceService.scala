@@ -5,7 +5,7 @@ import java.io.File
 import com.smartrural.estimator.model.InferenceInfo
 
 /**
-  * Created by jm186111 on 31/01/2018.
+  * Service to interact with the cluster inference information file
   */
 trait InferenceService {
   /**

@@ -11,9 +11,9 @@ import org.scalatest.junit.JUnitRunner
   * Created by jm186111 on 27/02/2018.
   */
 @RunWith(classOf[JUnitRunner])
-class LocalInferenceServiceTest extends FlatSpec with MockFactory{
+class InferenceServiceImplTest extends FlatSpec with MockFactory{
 
-  val inferenceService = new LocalInferenceService
+  val inferenceService = new InferenceServiceImpl
 
   val rootPathFile = new File(getClass.getClassLoader.getResource(".").getPath)
 

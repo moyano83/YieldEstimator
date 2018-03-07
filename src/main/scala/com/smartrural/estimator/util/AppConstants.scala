@@ -52,9 +52,9 @@ object AppConstants {
     */
   val PropertyDestinationPath = "destination.file.path"
   /**
-    * Property containing the destination path
+    * Property containing the destination path for the reconstructed images
     */
-  val PropertyBinaryImagesPath = "binary.images.path"
+  val PropertyReconstructedImagesPath = "reconstructed.images.path"
   /**
     * Property containing the destination path
     */
@@ -91,6 +91,10 @@ object AppConstants {
     * Gauss number of iterations property name
     */
   val PropertyGaussIterationsValue = "gauss.iterations.value"
+  /**
+    * Gauss number of iterations property name
+    */
+  val PropertySampleImageHistogram = "sample.histogram.image"
   /**
     * JPG Format
     */

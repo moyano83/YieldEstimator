@@ -7,7 +7,7 @@ import org.apache.commons.io.filefilter.TrueFileFilter.{INSTANCE => IOfilter}
 import org.opencv.core.Mat
 
 /**
-  * Created by jm186111 on 01/02/2018.
+  * Service to deal with file IO and path management and
   */
 trait FileManagerService {
   /**

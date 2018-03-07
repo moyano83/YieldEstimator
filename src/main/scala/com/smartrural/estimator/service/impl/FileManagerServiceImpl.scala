@@ -15,7 +15,7 @@ import scala.util.{Failure, Success, Try}
 /**
   * Created by jm186111 on 29/01/2018.
   */
-class LocalFileManager extends FileManagerService{
+class FileManagerServiceImpl extends FileManagerService{
 
   private val logger = LoggerFactory.getLogger(getClass)
 

@@ -3,7 +3,8 @@ package com.smartrural.estimator.transformer
 import java.io.File
 import javax.imageio.ImageIO
 
-import com.smartrural.estimator.service.impl.LocalFileManager
+import com.smartrural.estimator.service.impl.FileManagerServiceImpl
+import com.smartrural.estimator.transformer.impl.HistogramFilterTransformer
 import com.smartrural.estimator.util.ImageUtils
 import org.junit.runner.RunWith
 import org.opencv.core.Core
@@ -18,7 +19,7 @@ class HistogramFilterTransformerTest extends FlatSpec{
 
   System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
 
-  val fileManager = new LocalFileManager
+  val fileManager = new FileManagerServiceImpl
 
   val rootPathFile = new File(getClass.getClassLoader.getResource(".").getPath)
 
@@ -33,7 +34,7 @@ class HistogramFilterTransformerTest extends FlatSpec{
     val dstImage = "z-img-000-000004-histogram.jpg"
     val dstFile = new File(rootPathFile, dstImage)
     val originalImage = fileManager.readImage(image)
-    fileManager.writeImage(filter.applyTransform(originalImage), dstFile)
+    fileManager.writeImage(filter.transform(originalImage), dstFile)
     assert(dstFile.exists())
   }
 }

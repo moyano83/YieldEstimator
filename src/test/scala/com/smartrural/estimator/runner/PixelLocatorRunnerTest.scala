@@ -3,7 +3,7 @@ package com.smartrural.estimator.runner
 import java.io.File
 
 import com.smartrural.estimator.model._
-import com.smartrural.estimator.service.impl.LocalFileManager
+import com.smartrural.estimator.service.impl.FileManagerServiceImpl
 import com.smartrural.estimator.service.{FileManagerService, InferenceService}
 import org.apache.commons.io.filefilter.TrueFileFilter
 import org.junit.runner.RunWith
@@ -37,12 +37,11 @@ class PixelLocatorRunnerTest extends FlatSpec with MockFactory{
   val filteredImageFile2 = new File(rootPathFile, "FilteredImage2.png")
   val filteredImageMat2 = Imgcodecs.imread(filteredImageFile2.getAbsolutePath)
 
-  val fileManager = mock[LocalFileManager]
-  val inferenceService = mock[InferenceService]
-
   val resultFile = new File(rootPath, "result.txt")
 
+  val fileManager = mock[FileManagerService]
 
+  val inferenceService = mock[InferenceService]
 
   def setExpectations1():Unit= {
     val result:MockParameter[Any] =

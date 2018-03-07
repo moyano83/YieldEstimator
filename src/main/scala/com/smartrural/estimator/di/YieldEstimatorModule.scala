@@ -8,8 +8,8 @@ import scaldi.Module
   * Class that injects the appropriate service into the receiver classes
   */
 class YieldEstimatorModule extends Module{
-    bind[BoundingBoxService] to new BoundingBoxTextReaderService
-    bind[ImageReconstructionService] to new LocalImageReconstructionService()
-    bind[FileManagerService] to new LocalFileManager
-    bind[InferenceService] to new LocalInferenceService
+    bind[BoundingBoxService] to new BoundingBoxServiceImpl
+    bind[ImageReconstructionService] to new ImageReconstructionServiceImpl()
+    bind[FileManagerService] to new FileManagerServiceImpl
+    bind[InferenceService] to new InferenceServiceImpl
 }

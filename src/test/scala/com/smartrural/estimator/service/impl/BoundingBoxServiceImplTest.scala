@@ -9,7 +9,7 @@ import org.scalatest.FlatSpec
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class BoundingBoxTextReaderServiceTest extends FlatSpec{
+class BoundingBoxServiceImplTest extends FlatSpec{
 
   System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
 
@@ -18,7 +18,7 @@ class BoundingBoxTextReaderServiceTest extends FlatSpec{
   behavior of "BoundingBoxTextReader"
 
   val bbFile = new File(getClass.getClassLoader.getResource(s"${bboxFilePath}").getPath)
-  val bboxService = new BoundingBoxTextReaderService
+  val bboxService = new BoundingBoxServiceImpl
   it should "read the text bounding box file" in {
     val mapOfInferences = bboxService.readBBoxFile(bbFile)
     assert(mapOfInferences.size == 2)

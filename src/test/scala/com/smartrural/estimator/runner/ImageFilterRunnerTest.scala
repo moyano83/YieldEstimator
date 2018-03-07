@@ -2,9 +2,10 @@ package com.smartrural.estimator.runner
 
 import java.io.File
 
-import com.smartrural.estimator.service.impl.LocalFileManager
+import com.smartrural.estimator.service.impl.FileManagerServiceImpl
 import com.smartrural.estimator.service.{BoundingBoxService, FileManagerService}
 import com.smartrural.estimator.transformer._
+import com.smartrural.estimator.transformer.impl.{GaussianFilterTransformer, HistogramFilterTransformer, MedianFilterTransformer}
 import org.junit.runner.RunWith
 import org.opencv.core.Core
 import org.scalamock.scalatest.MockFactory
@@ -20,7 +21,7 @@ class ImageFilterRunnerTest extends FlatSpec with MockFactory{
 
   System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
 
-  val fileManager = new LocalFileManager
+  val fileManager = new FileManagerServiceImpl
 
   val boundingBoxService = mock[BoundingBoxService]
   (boundingBoxService.getDistinctImages _).expects(*).onCall{(x:File) => (x.getName, Set("z-img-000-000004.jpg"))}.once

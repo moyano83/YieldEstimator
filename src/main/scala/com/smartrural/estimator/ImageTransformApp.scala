@@ -5,11 +5,17 @@ import java.util.Properties
 
 import com.smartrural.estimator.di.YieldEstimatorModule
 import com.smartrural.estimator.runner.ImageFilterRunner
-import com.smartrural.estimator.transformer.{AvgBlurFilterTransformer, GaussianFilterTransformer, HueFilterImageTransformer}
+import com.smartrural.estimator.service.FileManagerService
+import com.smartrural.estimator.transformer.impl._
 import com.smartrural.estimator.util.AppConstants._
-import org.opencv.core.Core
+import org.opencv.core.{Core, Mat}
 import org.slf4j.LoggerFactory
+import scaldi.{Injectable, Injector}
 
+/**
+  * Application which defines a pipeline that applies several filters and transformations to the original images
+  * contained in a specified path in order to filter out non leaf pixels in the pictures
+  */
 object ImageTransformApp {
 
   val logger = LoggerFactory.getLogger(getClass)
@@ -29,43 +35,37 @@ object ImageTransformApp {
     val bboxesPath = properties.getProperty(PropertyBBoxesPath)
     val destinationPath = properties.getProperty(PropertyDestinationPath)
     val radius = properties.getProperty(PropertyRadiusPixelLocator).toInt
-
-    //Getting the color ranges, if not set, they will be unbounded
-    val hueRange = Range(
-      Option(properties.getProperty(PropertyHueMinValue)).map(_.toInt).getOrElse(0),
-      Option(properties.getProperty(HueMaxValue)).map(_.toInt).getOrElse(360)
-    )
-    val saturationRange = Range(
-      Option(properties.getProperty(PropertySaturationMinValue)).map(_.toInt).getOrElse(0),
-      Option(properties.getProperty(PropertySaturationMaxValue)).map(_.toInt).getOrElse(100)
-    )
-    val brightnessRange = Range(
-      Option(properties.getProperty(PropertyBrightnessMinValue)).map(_.toInt).getOrElse(0),
-      Option(properties.getProperty(PropertyBrightnessMaxValue)).map(_.toInt).getOrElse(100)
-    )
-
     val sigmaValue = Option(properties.getProperty(PropertyGaussSigmaValue)).map(_.toInt).getOrElse(1)
+    val sampleImageHistogramLocation = properties.getProperty(PropertySampleImageHistogram)
 
-    implicit val appModule = new YieldEstimatorModule
-
-    val listFilters = List(
-      new GaussianFilterTransformer(radius, sigmaValue),
-      new AvgBlurFilterTransformer(radius),
-      new HueFilterImageTransformer(hueRange, saturationRange, brightnessRange)
-    )
 
     if (Some(bboxesPath).isEmpty ||
-      Some(originalImagesPath).isEmpty ||
-      Some(destinationPath).isEmpty ||
-      Some(radius).isEmpty ||
-      Some(sigmaValue).isEmpty ){
+    Some(originalImagesPath).isEmpty ||
+    Some(destinationPath).isEmpty ||
+    Some(radius).isEmpty ||
+    Some(sigmaValue).isEmpty ||
+    Some(sampleImageHistogramLocation).isEmpty ){
 
       logger.error("Invalid set of parameters to run the Image transform process. Please review the configuration")
       System.exit(1)
     }
 
-    new ImageFilterRunner(bboxesPath, originalImagesPath, destinationPath, listFilters).run
+    implicit val appModule = new YieldEstimatorModule
+    val sampleImageMat = new FileManagerHelper().readImage(new File(sampleImageHistogramLocation))
+
+    val listFilters = List(
+      new MedianFilterTransformer(radius),
+      new GaussianFilterTransformer(radius, sigmaValue),
+      new HistogramFilterTransformer(radius, sampleImageMat)
+    )
+
+    val runner = new ImageFilterRunner(bboxesPath, originalImagesPath, destinationPath, listFilters)
+    val appThread = new Thread(runner)
+    appThread.start()
   }
 
-
+  class FileManagerHelper(implicit val inj:Injector) extends Injectable{
+    val fileManagerService = inject[FileManagerService]
+    def readImage(file:File):Mat = fileManagerService.readImage(file)
+  }
 }

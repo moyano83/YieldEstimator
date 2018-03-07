@@ -9,7 +9,7 @@ import org.scalatest.junit.JUnitRunner
 
 
 @RunWith(classOf[JUnitRunner])
-class LocalFileManagerTest extends FlatSpec{
+class FileManagerServiceImplTest extends FlatSpec{
 
   System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
 
@@ -19,7 +19,7 @@ class LocalFileManagerTest extends FlatSpec{
   val partition = "valdemonjas-2017-09-13_01"
   val imageName = "z-img-000-000004.jpg"
 
-  val fileManagerService = new LocalFileManager
+  val fileManagerService = new FileManagerServiceImpl
 
   behavior of "LocalFileManager"
 

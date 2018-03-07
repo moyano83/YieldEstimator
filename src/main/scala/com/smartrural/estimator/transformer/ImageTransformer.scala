@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory
 
 
 /**
-  * Created by jm186111 on 12/02/2018.
+  * Image transformer
   */
 trait ImageTransformer {
   /**
@@ -21,5 +21,5 @@ trait ImageTransformer {
     * @param img the image to transform
     * @return the transformed image
     */
-  def applyTransform(img:Mat):Mat
+  def transform(img:Mat):Mat
 }
