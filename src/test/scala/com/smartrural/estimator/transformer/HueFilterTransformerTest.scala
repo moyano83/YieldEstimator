@@ -33,7 +33,7 @@ class HueFilterTransformerTest extends FlatSpec with MockFactory{
     val dstImage = "z-img-000-000004-hue.jpg"
     val dstFile = new File(rootPathFile, dstImage)
     val originalImage = fileManager.readImage(image)
-    fileManager.writeImage(filter.transform(originalImage), dstFile)
+    fileManager.writeImage(filter.transform(image, originalImage), dstFile)
     assert(dstFile.exists())
   }
 }

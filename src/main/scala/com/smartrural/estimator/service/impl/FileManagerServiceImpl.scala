@@ -37,6 +37,15 @@ class FileManagerServiceImpl extends FileManagerService{
   /**
     * @inheritdoc
     */
+  override def getMirrorImageFileWithExtension(imageToMirror:File, mirrorBasePath:String, extension:String):File = {
+    val imageName = imageToMirror.getName
+    val imageNameWithExtension = imageName.substring(0, imageName.lastIndexOf(".") + 1).concat(extension)
+    val partitionFolder = imageToMirror.getParentFile.getName
+    new File(new File(mirrorBasePath, partitionFolder), imageNameWithExtension)
+  }
+  /**
+    * @inheritdoc
+    */
   override def writeImage(im: Mat, output: File): Boolean = {
     output.getParentFile.mkdirs()
     Imgcodecs.imwrite(output.getAbsolutePath, im)

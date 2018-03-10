@@ -22,18 +22,18 @@ class AvgBlurFilterTransformerTest extends FlatSpec with MockFactory{
 
   val rootPathFile = new File(getClass.getClassLoader.getResource(".").getPath)
 
-  val image = new File(rootPathFile, "original_images/valdemonjas-2017-09-13_01/z-img-000-000004.jpg")
+  val image = new File(rootPathFile, "FilteredImage2.png")
 
-  val filter = new AvgBlurFilterTransformer(2)
+  val filter = new AvgBlurFilterTransformer(4)
 
   behavior of "AvgBlurFilterTransformer"
 
   it should "execute the filter transformation" in {
     println(filter.filterName)
-    val dstImage = "z-img-000-000004-avg.jpg"
+    val dstImage = "FilteredImage2-avg.png"
     val dstFile = new File(rootPathFile, dstImage)
     val originalImage = fileManager.readImage(image)
-    fileManager.writeImage(filter.transform(originalImage), dstFile)
+    fileManager.writeImage(filter.transform(image, originalImage), dstFile)
     assert(dstFile.exists())
   }
 }

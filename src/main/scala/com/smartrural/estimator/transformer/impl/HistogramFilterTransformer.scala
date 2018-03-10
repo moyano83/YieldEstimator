@@ -1,5 +1,7 @@
 package com.smartrural.estimator.transformer.impl
 
+import java.io.File
+
 import com.smartrural.estimator.transformer.ImageTransformer
 import com.smartrural.estimator.util.ImageUtils._
 import org.opencv.core._
@@ -44,7 +46,7 @@ class HistogramFilterTransformer(val radius:Int, val sampleImage:Mat) extends Im
   /**
     * @inheritdoc
     */
-  override def transform(originalImg: Mat): Mat = {
+  override def transform(matFile:File, originalImg:Mat):Mat = {
     val originalImgHSV = getCVT(originalImg)
     val hsvt = splitPlanes(originalImgHSV)
 

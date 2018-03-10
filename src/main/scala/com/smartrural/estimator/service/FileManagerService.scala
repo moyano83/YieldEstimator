@@ -10,6 +10,8 @@ import org.opencv.core.Mat
   * Service to deal with file IO and path management and
   */
 trait FileManagerService {
+
+  private val filter = new IOFilterDSStore(IOfilter)
   /**
     * Returns the list of files contained in the folder passed
     * @param path the path to the folder
@@ -17,7 +19,7 @@ trait FileManagerService {
     * @param dirFilter the dir filename filter
     * @return the list of child files
     */
-  def getChildList(path: String, filter:IOFileFilter = IOfilter, dirFilter:IOFileFilter = IOfilter): Array[File]
+  def getChildList(path: String, filter:IOFileFilter = filter, dirFilter:IOFileFilter = filter): Array[File]
   /**
     * Gets a file that is mirroring the passed one with a different root path
     * @param imageToMirror the image to mirror
@@ -25,6 +27,15 @@ trait FileManagerService {
     * @return the File representing the mirror file
     */
   def getMirrorImageFile(imageToMirror: File, mirrorBasePath: String): File
+
+  /**
+    * Gets a file that is mirroring the passed one with a different root path
+    * @param imageToMirror the image to mirror
+    * @param mirrorBasePath the base path to construct the mirror image
+    * @param extension the extension that the image should have
+    * @return the File representing the mirror file
+    */
+  def getMirrorImageFileWithExtension(imageToMirror: File, mirrorBasePath: String, extension:String): File
   /**
     * Wrapper of the ImageIO static write function, so it is possible to mock this call
     *
@@ -56,8 +67,16 @@ trait FileManagerService {
     def getComposedFileAux(relativePaths:List[String]):File = relativePaths match{
       case filePath :: Nil => new File(filePath)
       case filePath :: elementList => new File(getComposedFileAux(elementList), filePath)
+      case _ => throw new IllegalArgumentException("Unrecognized collection")
     }
     getComposedFileAux(reversedRelativePathLists)
   }
 
+  private [FileManagerService] class IOFilterDSStore(filter:IOFileFilter) extends IOFileFilter {
+    override def accept(file: File): Boolean = if (file.getName == ".DS_Store") false else filter.accept(file)
+
+    override def accept(dir: File, name: String): Boolean =
+      if (name == ".DS_Store") false
+      else filter.accept(dir, name)
+  }
 }

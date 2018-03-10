@@ -1,6 +1,6 @@
 package com.smartrural.estimator.util
 
-import com.smartrural.estimator.model.ColoredPixel
+import com.smartrural.estimator.model.BinaryPixel
 
 object AppConstants {
   /**
@@ -18,7 +18,7 @@ object AppConstants {
   /**
     * Value of an unset pixel in the position 0,0
     */
-  val VoidRGB = ColoredPixel(0, 0, 0)
+  val VoidRGB = BinaryPixel(true, 0, 0)
   /**
     * Name of the files holding information about the bounding boxes
     */

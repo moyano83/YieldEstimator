@@ -30,12 +30,14 @@ import org.slf4j.LoggerFactory
     val properties = new Properties()
     properties.load(new FileInputStream(new File(args(0))))
 
+    val radius = properties.getProperty(AppConstants.PropertyRadiusPixelLocator)
     val bboxesPath = properties.getProperty(AppConstants.PropertyBBoxesPath)
     val originalImagesPath = properties.getProperty(AppConstants.PropertyOriginalImagePath)
     val patchImgPath = properties.getProperty(AppConstants.PropertyPatchesPath)
     val destinationPath = properties.getProperty(AppConstants.PropertyReconstructedImagesPath)
 
-    if (Some(bboxesPath).isEmpty ||
+    if (Some(radius).isEmpty ||
+      Some(bboxesPath).isEmpty ||
       Some(originalImagesPath).isEmpty ||
       Some(patchImgPath).isEmpty ||
       Some(destinationPath).isEmpty ){
@@ -44,9 +46,7 @@ import org.slf4j.LoggerFactory
       System.exit(1)
     }
 
-    val runner = new ImageReconstructionRunner(bboxesPath, originalImagesPath, patchImgPath, destinationPath)
-
-    val appThread = new Thread(runner)
-    appThread.start()
+    val runner = new ImageReconstructionRunner(radius.toInt, bboxesPath, originalImagesPath, patchImgPath, destinationPath)
+    runner.run
   }
 }

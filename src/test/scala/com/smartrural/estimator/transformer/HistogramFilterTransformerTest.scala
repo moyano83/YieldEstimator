@@ -34,7 +34,7 @@ class HistogramFilterTransformerTest extends FlatSpec{
     val dstImage = "z-img-000-000004-histogram.jpg"
     val dstFile = new File(rootPathFile, dstImage)
     val originalImage = fileManager.readImage(image)
-    fileManager.writeImage(filter.transform(originalImage), dstFile)
+    fileManager.writeImage(filter.transform(image, originalImage), dstFile)
     assert(dstFile.exists())
   }
 }

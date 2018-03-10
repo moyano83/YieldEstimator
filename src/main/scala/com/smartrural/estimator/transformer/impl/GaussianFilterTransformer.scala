@@ -1,5 +1,7 @@
 package com.smartrural.estimator.transformer.impl
 
+import java.io.File
+
 import com.smartrural.estimator.transformer.ImageTransformer
 import org.opencv.core.{Mat, Size}
 import org.opencv.imgproc.Imgproc
@@ -13,7 +15,7 @@ class GaussianFilterTransformer(radius:Int = 5, sigma:Double = 1.0) extends Imag
   /**
     * @inheritdoc
     */
-  override def transform(img:Mat):Mat = {
+  override def transform(matFile:File, img:Mat):Mat = {
     val s = new Size(radius,radius)
     Imgproc.GaussianBlur(img, img, s, sigma)
     img

@@ -8,13 +8,15 @@ import scaldi.{Injectable, Injector}
 
 /**
   * Class that creates the final binary image from the patches described in the bounding box info file
+  * @param radius The radius to consider
   * @param bboxesPath the root path to the bbox files
   * @param originalImagesPath the root path to the original images
   * @param patchImgPath the root path to the patch image files
   * @param destinationPath the root path of the destination images
   * @param inj the scaldi dependency injector module
   */
-class ImageReconstructionRunner(bboxesPath:String,
+class ImageReconstructionRunner(radius:Int,
+                                bboxesPath:String,
                                 originalImagesPath:String,
                                 patchImgPath:String,
                                 destinationPath:String)(implicit inj:Injector) extends Injectable with Runnable{
@@ -44,7 +46,7 @@ class ImageReconstructionRunner(bboxesPath:String,
   def reconstructImagesPerPartition(bboxFile:File):Unit =
     boundingBoxService.readBBoxFile(bboxFile).map({case (image, inferenceList) =>{
       val partition = bboxFile.getParentFile.getName
-        imageReconstructionService.reconstructImage(
+        imageReconstructionService.reconstructImage(radius,
           fileManagerService.getComposedFile(List(originalImagesPath, partition, image)),
           inferenceList,
           fileManagerService.getComposedFile(List(patchImgPath, partition)),
