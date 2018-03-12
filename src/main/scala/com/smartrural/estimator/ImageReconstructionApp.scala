@@ -5,6 +5,7 @@ import java.util.Properties
 
 import com.smartrural.estimator.di.YieldEstimatorModule
 import com.smartrural.estimator.runner.ImageReconstructionRunner
+import com.smartrural.estimator.transformer.impl.ClusterSurroundingFilterTransformer
 import com.smartrural.estimator.util.AppConstants
 import org.opencv.core.Core
 import org.slf4j.LoggerFactory

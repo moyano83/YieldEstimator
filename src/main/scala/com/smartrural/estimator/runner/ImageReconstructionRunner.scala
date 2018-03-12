@@ -3,7 +3,7 @@ package com.smartrural.estimator.runner
 import java.io.File
 
 import com.smartrural.estimator.service.{BoundingBoxService, FileManagerService, ImageReconstructionService}
-import com.smartrural.estimator.util.AppConstants
+import com.smartrural.estimator.transformer.impl.{ClusterSurroundingFilterTransformer, EnforcePixelColorFilterTransformer}
 import scaldi.{Injectable, Injector}
 
 /**
@@ -33,6 +33,11 @@ class ImageReconstructionRunner(radius:Int,
     * The bounding box service
     */
   val boundingBoxService = inject[BoundingBoxService]
+
+  /**
+    * The list of filters to apply
+    */
+  val filterList = List(new ClusterSurroundingFilterTransformer(radius.toInt), new EnforcePixelColorFilterTransformer)
   /**
     * @inheritdoc
     */
@@ -50,6 +55,7 @@ class ImageReconstructionRunner(radius:Int,
           fileManagerService.getComposedFile(List(originalImagesPath, partition, image)),
           inferenceList,
           fileManagerService.getComposedFile(List(patchImgPath, partition)),
+          filterList,
           fileManagerService.getComposedFile(List(destinationPath, partition)))
       }
     })

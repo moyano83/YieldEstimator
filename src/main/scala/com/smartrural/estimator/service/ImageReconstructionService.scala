@@ -3,6 +3,7 @@ package com.smartrural.estimator.service
 import java.io.File
 
 import com.smartrural.estimator.model.BBoxItemInfo
+import com.smartrural.estimator.transformer.ImageTransformer
 
 /**
   * Service that provides functionality to construct the binary images from the patch images
@@ -20,5 +21,6 @@ import com.smartrural.estimator.model.BBoxItemInfo
                        originalImgFile:File,
                        inferences:List[BBoxItemInfo],
                        patchesPath:File,
+                       imageTransformers:List[ImageTransformer],
                        destinationPath:File):Unit
 }

@@ -1,10 +1,8 @@
 package com.smartrural.estimator.util
 
-import java.lang.Math.{max, min}
-
-import com.smartrural.estimator.model.{BBoxItemInfo, BinaryPixel}
-import com.smartrural.estimator.util.AppConstants.ZeroCoordinate
-import org.opencv.core.{Core, CvType, Mat}
+import com.smartrural.estimator.model.BinaryPixel
+import com.smartrural.estimator.util.AppConstants.{RedColor, VoidColor}
+import org.opencv.core.{Core, CvType, Mat, Scalar}
 import org.opencv.imgproc.Imgproc
 
 import scala.collection.JavaConversions._
@@ -22,54 +20,13 @@ object ImageUtils {
     * @param col column coordinate
     * @return the Colored pixel
     */
-  def arrayToColoredPixel(mat: Mat, row:Int, col:Int):BinaryPixel = {
+  def arrayToBinaryPixel(mat: Mat, row:Int, col:Int):BinaryPixel = {
     mat.get(row,col) match {
       case Array(r:Double, g:Double, b:Double) => new BinaryPixel((r.toInt + g.toInt + b.toInt) == 0, row, col)
       case value => throw new Exception(s"Couldn't parse value=[$value]")
     }
   }
-
-  def getMatAsListOfColouredPixels(img:Mat):List[BinaryPixel] =
-    (for {row <- ZeroCoordinate until img.rows();
-          col <- ZeroCoordinate until img.cols();
-          pixel = arrayToColoredPixel(img, row, col)
-  } yield pixel).toList
-
   def getListPositionByCoordinate(maxCols:Int, row:Int, col:Int):Int = (row + col * maxCols)
-  /**
-    * Gets the list of the surrounding pixels by radius
-    * @param allPixels the list of pixels
-    * @param radius the radiuls
-    * @return the list of surrounding pixels
-    */
-  def extractAllSurroundingVoidPixelsFromImage(pixelsToInspect:List[BinaryPixel],
-                                               allPixels:List[BinaryPixel],
-                                               rows:Int,
-                                               cols:Int,
-                                               radius:Int):Set[BinaryPixel] = {
-    pixelsToInspect
-      .map(pixel => inspectSurroundingCoordinates(rows, cols, radius, pixel, allPixels))
-      .flatten
-      .toSet
-  }
-
-  /**
-    * Gets the list of the surrounding pixels by radius not contained in the list passed
-    * @param maxRows upper limit for rows
-    * @param maxCols upper limit for cols
-    * @param radius the radiuls
-    * @param pixel the central pixel
-    * @return the list of surrounding pixels
-    */
-  private def inspectSurroundingCoordinates(maxRows:Int,
-                                            maxCols:Int,
-                                            radius:Int,
-                                            pixel:BinaryPixel,
-                                            allPixels:List[BinaryPixel]):List[BinaryPixel] =
-    (for {row <- max(pixel.row - radius, ZeroCoordinate) to min(pixel.row + radius, maxRows -1);
-          col <- max(pixel.col - radius, ZeroCoordinate) to min(pixel.col + radius, maxCols -1);
-          pixel = new BinaryPixel(true,row,col) if !allPixels.contains(pixel)
-    } yield pixel).toList
 
   /**
     * Wrapper for the cvtColor method
@@ -112,7 +69,7 @@ object ImageUtils {
   def getMatAsBinaryPixels(img:Mat):List[BinaryPixel] =
     (for (row <- 0 until img.rows();
          col <- 0 until img.cols()
-    ) yield ImageUtils.arrayToColoredPixel(img, row, col)).toList
+    ) yield ImageUtils.arrayToBinaryPixel(img, row, col)).toList
 
 
   /**
@@ -123,7 +80,7 @@ object ImageUtils {
   def getNonVoidPixelCount(img:Mat):Double =
     (for (row <- 0 until img.rows();
           col <- 0 until img.cols();
-      px = if(ImageUtils.arrayToColoredPixel(img, row, col).isNotVoid) 1 else 0
+      px = if(ImageUtils.arrayToBinaryPixel(img, row, col).isNotVoid) 1 else 0
     ) yield px).sum
 
   /**
@@ -142,8 +99,30 @@ object ImageUtils {
   }
 
   /**
+    * Gets a new mat
+    * @param img to copy
+    * @return the new Mat
+    */
+  def getCopyMat(img:Mat) = {
+    val mat = new Mat(img.rows, img.cols, CvType.CV_8UC3)
+    for(row<-0 until img.rows;
+        col<-0 until img.cols;
+      pixel = img.get(row, col) match {
+        case Array(0d, 0d, 0d) => AppConstants.VoidColor
+        case _ => AppConstants.RedColor
+      }) yield mat.put(row, col, pixel)
+    mat
+  }
+  /**
     * returns an empty Mat
     * @return the mat
     */
   def getMat() = new Mat()
+
+  /**
+    * Sets the color of the pixel to red if it is not void
+    * @param pixel the pixel to inspect
+    * @return an array representing either void or red color
+    */
+  def getColorForPixel(pixel:BinaryPixel):Array[Byte] = if (pixel.isVoid) VoidColor else RedColor
 }

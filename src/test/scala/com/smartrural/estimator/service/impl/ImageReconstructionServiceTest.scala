@@ -58,7 +58,7 @@ class ImageReconstructionServiceTest extends FlatSpec with MockFactory{
     val imageFile = new File(originalImagesFolder, imageName)
     val inferences = bboxService.readBBoxFile(bboxesFolder).get(imageName).get
 
-    imageReconstructionService.reconstructImage(5, imageFile, inferences, patchesFolder, destinationFolder)
+    imageReconstructionService.reconstructImage(5, imageFile, inferences, patchesFolder, List(), destinationFolder)
     assert(new File(destinationFolder, destImageName).exists())
   }
 

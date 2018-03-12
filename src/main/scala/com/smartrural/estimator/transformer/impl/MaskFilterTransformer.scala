@@ -11,7 +11,7 @@ import scaldi.{Injectable, Injector}
 /**
   * Created by jm186111 on 10/03/2018.
   */
-class ClusterFilterTransformer(reconstructedImagesPath:String)(implicit val inj:Injector)
+class MaskFilterTransformer(maskImagesPath:String)(implicit val inj:Injector)
   extends ImageTransformer with Injectable{
 
   val fileManagerService = inject[FileManagerService]
@@ -23,7 +23,7 @@ class ClusterFilterTransformer(reconstructedImagesPath:String)(implicit val inj:
     * @return the transformed image
     */
   override def transform(matFile: File, img: Mat): Mat = {
-    val maskImageFile = fileManagerService.getMirrorImageFileWithExtension(matFile, reconstructedImagesPath, AppConstants.FormatPng)
+    val maskImageFile = fileManagerService.getMirrorImageFileWithExtension(matFile, maskImagesPath, AppConstants.FormatPng)
     val maskMat = fileManagerService.readImage(maskImageFile)
 
     val dstMat = ImageUtils.getMat(img.rows, img.cols)
