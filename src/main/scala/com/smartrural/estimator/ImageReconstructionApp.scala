@@ -5,7 +5,6 @@ import java.util.Properties
 
 import com.smartrural.estimator.di.YieldEstimatorModule
 import com.smartrural.estimator.runner.ImageReconstructionRunner
-import com.smartrural.estimator.transformer.impl.ClusterSurroundingFilterTransformer
 import com.smartrural.estimator.util.AppConstants
 import org.opencv.core.Core
 import org.slf4j.LoggerFactory
@@ -35,19 +34,19 @@ import org.slf4j.LoggerFactory
     val bboxesPath = properties.getProperty(AppConstants.PropertyBBoxesPath)
     val originalImagesPath = properties.getProperty(AppConstants.PropertyOriginalImagePath)
     val patchImgPath = properties.getProperty(AppConstants.PropertyPatchesPath)
-    val destinationPath = properties.getProperty(AppConstants.PropertyReconstructedImagesPath)
+    val dstPath = properties.getProperty(AppConstants.PropertyMaskImagePath)
 
     if (Some(radius).isEmpty ||
       Some(bboxesPath).isEmpty ||
       Some(originalImagesPath).isEmpty ||
       Some(patchImgPath).isEmpty ||
-      Some(destinationPath).isEmpty ){
+      Some(dstPath).isEmpty ){
 
       logger.error("Invalid set of parameters to run the Image reconstruction process. Please review the configuration")
       System.exit(1)
     }
 
-    val runner = new ImageReconstructionRunner(radius.toInt, bboxesPath, originalImagesPath, patchImgPath, destinationPath)
+    val runner = new ImageReconstructionRunner(radius.toInt, bboxesPath, originalImagesPath, patchImgPath, dstPath)
     runner.run
   }
 }

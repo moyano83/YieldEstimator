@@ -26,7 +26,7 @@ trait FileManagerService {
     * @param mirrorBasePath the base path to construct the mirror image
     * @return the File representing the mirror file
     */
-  def getMirrorImageFile(imageToMirror: File, mirrorBasePath: String): File
+  def getMirrorFile(imageToMirror: File, mirrorBasePath: String): File
 
   /**
     * Gets a file that is mirroring the passed one with a different root path
@@ -35,7 +35,7 @@ trait FileManagerService {
     * @param extension the extension that the image should have
     * @return the File representing the mirror file
     */
-  def getMirrorImageFileWithExtension(imageToMirror: File, mirrorBasePath: String, extension:String): File
+  def getMirrorFileWithExtension(imageToMirror: File, mirrorBasePath: String, extension:String): File
   /**
     * Wrapper of the ImageIO static write function, so it is possible to mock this call
     *

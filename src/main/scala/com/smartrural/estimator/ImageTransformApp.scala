@@ -6,7 +6,9 @@ import java.util.Properties
 import com.smartrural.estimator.di.YieldEstimatorModule
 import com.smartrural.estimator.runner.ImageFilterRunner
 import com.smartrural.estimator.service.FileManagerService
+import com.smartrural.estimator.transformer.ImageTransformer
 import com.smartrural.estimator.transformer.impl._
+import com.smartrural.estimator.util.AppConstants
 import com.smartrural.estimator.util.AppConstants._
 import org.opencv.core.{Core, Mat}
 import org.slf4j.LoggerFactory
@@ -32,18 +34,18 @@ object ImageTransformApp {
     properties.load(new FileInputStream(new File(args(0))))
 
     val originalImagesPath = properties.getProperty(PropertyOriginalImagePath)
-    val bboxesPath = properties.getProperty(PropertyBBoxesPath)
     val destinationPath = properties.getProperty(PropertyDestinationPath)
+    val maskImagePath = properties.getProperty(PropertyMaskImagePath)
     val radius = properties.getProperty(PropertyRadiusPixelLocator).toInt
     val sigmaValue = Option(properties.getProperty(PropertyGaussSigmaValue)).map(_.toInt).getOrElse(1)
     val sampleImageHistogramLocation = properties.getProperty(PropertySampleImageHistogram)
+    val inferencesFile = new File(properties.getProperty(PropertyInferencesFile))
 
-
-    if (Some(bboxesPath).isEmpty ||
-    Some(originalImagesPath).isEmpty ||
+    if (Some(originalImagesPath).isEmpty ||
     Some(destinationPath).isEmpty ||
     Some(radius).isEmpty ||
     Some(sigmaValue).isEmpty ||
+    Some(maskImagePath).isEmpty ||
     Some(sampleImageHistogramLocation).isEmpty ){
 
       logger.error("Invalid set of parameters to run the Image transform process. Please review the configuration")
@@ -56,10 +58,11 @@ object ImageTransformApp {
     val listFilters = List(
       new MedianFilterTransformer(radius),
       new GaussianFilterTransformer(radius, sigmaValue),
-      new HistogramFilterTransformer(radius, sampleImageMat)
+      new HistogramFilterTransformer(radius, sampleImageMat),
+      new MaskFilterTransformer(maskImagePath, AppConstants.FormatPng)
     )
 
-    val runner = new ImageFilterRunner(bboxesPath, originalImagesPath, destinationPath, listFilters)
+    val runner = new ImageFilterRunner(inferencesFile, maskImagePath, originalImagesPath, destinationPath, listFilters)
     val appThread = new Thread(runner)
     appThread.start()
   }

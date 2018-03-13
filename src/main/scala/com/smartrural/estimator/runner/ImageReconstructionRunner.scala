@@ -49,7 +49,8 @@ class ImageReconstructionRunner(radius:Int,
     * @param bboxFile the bbox file containing the image information
     */
   def reconstructImagesPerPartition(bboxFile:File):Unit =
-    boundingBoxService.readBBoxFile(bboxFile).map({case (image, inferenceList) =>{
+    boundingBoxService.readBBoxFile(bboxFile)
+      .map({case (image, inferenceList) =>{
       val partition = bboxFile.getParentFile.getName
         imageReconstructionService.reconstructImage(radius,
           fileManagerService.getComposedFile(List(originalImagesPath, partition, image)),

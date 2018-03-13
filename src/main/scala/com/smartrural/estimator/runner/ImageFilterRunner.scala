@@ -2,8 +2,12 @@ package com.smartrural.estimator.runner
 
 import java.io.File
 
-import com.smartrural.estimator.service.{BoundingBoxService, FileManagerService}
+import com.smartrural.estimator.model.VineYieldParameters
+import com.smartrural.estimator.service.{BoundingBoxService, FileManagerService, InferenceService}
 import com.smartrural.estimator.transformer.ImageTransformer
+import com.smartrural.estimator.util.AppConstants._
+import com.smartrural.estimator.util.ImageUtils._
+import org.opencv.core.Mat
 import org.slf4j.LoggerFactory
 import scaldi.{Injectable, Injector}
 
@@ -12,9 +16,10 @@ import scala.util.{Failure, Success, Try}
 /**
   * Runnable that applies the different configured filters over the images found in the configured path
   */
-class ImageFilterRunner(bboxesPath:String,
+class ImageFilterRunner(inferencesInfoFile:File,
+                        maskImagesPath:String,
                         originalImagesPath:String,
-                        destinationImagesPath:String,
+                        destinationFilePath:String,
                         listFilters:List[ImageTransformer])(implicit inj: Injector)
   extends Runnable with Injectable{
 
@@ -30,39 +35,56 @@ class ImageFilterRunner(bboxesPath:String,
     * File Manager service
     */
   val fileManagerService = inject[FileManagerService]
+  /**
+    * Inference Service
+    */
+  val inferenceService = inject[InferenceService]
 
+  import fileManagerService._
   /**
     * @inheritdoc
     */
   override def run(): Unit = fileManagerService
-      .getChildList(bboxesPath)
-      .map(bboxService.getDistinctImages)
-      .flatMap{case(partition, fileSet) => getImagesFromSetAndBbxFile(partition, fileSet)}
+      .getChildList(maskImagesPath)
+      .filter(!getMirrorFileWithExtension(_, destinationFilePath, TextExtension).exists())
+      .map(getMirrorFileWithExtension(_, originalImagesPath, FormatJpg))
       .foreach(file => {
-        Try(runTransformers(file)) match {
-          case Success(_) => logger.debug(s"Successfully processed the file=[${file.getName}]")
+        Try(listFilters.foldLeft(readImage(file))((img, transformer) => transformer.transform(file, img))) match {
+          case Success(mat) => calculateAndWriteVineYieldParam(file, mat)
           case Failure(ex) => logger.error(s"Failed to process the file=[${file.getName}]", ex)
         }
       })
 
-
   /**
-    * Applies the transformer list to the image and saves the result in the mirror path destination
-    * @param image the image to transform
-    * @return a boolean with the operation
+    * Claculates the Yield parameters and writes it to the output file
+    * @param imgFile the image file
+    * @param imgMat the image Mat corresponding to the file
     */
-  def runTransformers(image:File):Unit = {
-    import fileManagerService._
-    val resultImg = listFilters.foldLeft(readImage(image))((img, transformer) => transformer.transform(image, img))
-    writeImage(resultImg, getMirrorImageFile(image, destinationImagesPath))
+  private def calculateAndWriteVineYieldParam(imgFile: File, imgMat: Mat):Unit = {
+    val reconstructedImageMat = readImage(getMirrorFileWithExtension(imgFile, maskImagesPath, FormatPng))
+    val destinationFile = getMirrorFileWithExtension(imgFile, destinationFilePath, TextExtension)
+    val percentage = getLeafPixelPercentage(imgMat, reconstructedImageMat)
+    val searchFileName = getFileSearchString(imgFile)
+
+    inferenceService
+      .getInferenceByPictureName(inferencesInfoFile, searchFileName)
+      .foreach(inf => writeObjAsLineToFile(new VineYieldParameters(inf, percentage), destinationFile))
   }
 
   /**
-    * Gets the set of images
-    * @param partition
-    * @param imageNames
-    * @return
+    * Gets a string to search for the files
+    * @param file the file to compose the string
+    * @return the search string
     */
-  def getImagesFromSetAndBbxFile(partition:String, imageNames:Set[String]):Set[File] =
-    imageNames.map(image => fileManagerService.getComposedFile(List(originalImagesPath, partition, image)))
+  private def getFileSearchString(file:File) =
+    s"${file.getParentFile.getName}/${file.getName}"
+
+  /**
+    * Gets the leaf percentage in the math
+    * @param transformedImageMat the image we look for leafs
+    * @param maskMat the mask mat for that picture
+    * @return the leaf percentage
+    */
+  private def getLeafPixelPercentage(transformedImageMat:Mat, maskMat:Mat): Double =
+    getNonVoidPixelCount(transformedImageMat) / getNonVoidPixelCount(maskMat)
 }

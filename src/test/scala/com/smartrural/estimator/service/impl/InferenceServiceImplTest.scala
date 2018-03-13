@@ -19,18 +19,18 @@ class InferenceServiceImplTest extends FlatSpec with MockFactory{
 
   val inferencesFile = new File(rootPathFile, s"inferences_info/valdemonjas_2017_09_13_inference.geojson")
 
-  val testImageUrl = "https://s3.amazonaws.com/tileo-datasets/quadvine/2017/valdemonjas/valdemonjas-2017-09-13-inferences/valdemonjas-2017-09-13_09/z-img-000-001568.jpg"
+  val testImageUrl = "https://s3.amazonaws.com/tileo-datasets/quadvine/2017/valdemonjas/valdemonjas-2017-09-13-inferences-2/valdemonjas-2017-09-13_13/z-img-000-000032.jpg"
 
   behavior of "LocalInferenceService"
 
   it should "parse the given file" in {
     val listInferences = inferenceService.readInferencesFile(inferencesFile)
-    assert(listInferences.size == 5)
+    assert(listInferences.size == 3)
     assert(listInferences.find(_.properties.url == testImageUrl).isDefined)
   }
 
   it should "return the image with the specified name" in {
-    val inference = inferenceService.getInferenceByPictureName(inferencesFile, "valdemonjas-2017-09-13_09/z-img-000-001568.jpg")
+    val inference = inferenceService.getInferenceByPictureName(inferencesFile, "valdemonjas-2017-09-13_13/z-img-000-000032.jpg")
     assert(inference.isDefined)
     assert(inference.get.properties.url == testImageUrl)
   }

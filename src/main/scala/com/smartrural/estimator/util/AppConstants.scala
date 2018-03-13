@@ -4,9 +4,9 @@ import com.smartrural.estimator.model.BinaryPixel
 
 object AppConstants {
   /**
-    * RGB red color
+    * RGB white color
     */
-  val RedColor = Array(0.toByte, 0.toByte, 255.toByte)
+  val WhiteColor = Array(255.toByte, 255.toByte, 255.toByte)
   /**
     * RGB unset color
     */
@@ -32,9 +32,9 @@ object AppConstants {
     */
   val PropertyFilteredImagePath = "filtered.image.path"
   /**
-    * Property containing the path to the reconstructed binary images
+    * Property containing the path to the mask binary images
     */
-  val PropertyReconstructedImagePath = "reconstructed.image.path"
+  val PropertyMaskImagePath = "mask.image.path"
   /**
     * Property containing the path to the patch images
     */
@@ -51,10 +51,6 @@ object AppConstants {
     * Property containing the destination path
     */
   val PropertyDestinationPath = "destination.file.path"
-  /**
-    * Property containing the destination path for the reconstructed images
-    */
-  val PropertyReconstructedImagesPath = "reconstructed.images.path"
   /**
     * Property containing the destination path
     */
@@ -107,4 +103,8 @@ object AppConstants {
     * BMP format
     */
   val FormatBmp = "BMP"
+  /**
+    * txt extension
+    */
+  val TextExtension = "txt"
 }

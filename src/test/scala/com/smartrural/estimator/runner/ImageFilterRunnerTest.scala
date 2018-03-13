@@ -46,7 +46,8 @@ class ImageFilterRunnerTest extends FlatSpec with MockFactory{
   behavior of "ImageFilterRunner"
 
   val runner = new ImageFilterRunner(
-    new File(rootPathFile, "bbox_info").getAbsolutePath,
+    new File(rootPathFile, "inferences.json"),
+    new File(rootPathFile, "mask").getAbsolutePath,
     new File(rootPathFile, "original_images").getAbsolutePath,
     destinationFolder.getAbsolutePath,
     filterList

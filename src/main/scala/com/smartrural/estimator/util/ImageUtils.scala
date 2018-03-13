@@ -1,8 +1,8 @@
 package com.smartrural.estimator.util
 
 import com.smartrural.estimator.model.BinaryPixel
-import com.smartrural.estimator.util.AppConstants.{RedColor, VoidColor}
-import org.opencv.core.{Core, CvType, Mat, Scalar}
+import com.smartrural.estimator.util.AppConstants._
+import org.opencv.core.{Core, CvType, Mat}
 import org.opencv.imgproc.Imgproc
 
 import scala.collection.JavaConversions._
@@ -108,8 +108,8 @@ object ImageUtils {
     for(row<-0 until img.rows;
         col<-0 until img.cols;
       pixel = img.get(row, col) match {
-        case Array(0d, 0d, 0d) => AppConstants.VoidColor
-        case _ => AppConstants.RedColor
+        case Array(0d, 0d, 0d) => VoidColor
+        case _ => WhiteColor
       }) yield mat.put(row, col, pixel)
     mat
   }
@@ -124,5 +124,5 @@ object ImageUtils {
     * @param pixel the pixel to inspect
     * @return an array representing either void or red color
     */
-  def getColorForPixel(pixel:BinaryPixel):Array[Byte] = if (pixel.isVoid) VoidColor else RedColor
+  def getColorForPixel(pixel:BinaryPixel):Array[Byte] = if (pixel.isVoid) VoidColor else WhiteColor
 }

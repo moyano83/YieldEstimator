@@ -23,12 +23,12 @@ class FileManagerServiceImpl extends FileManagerService{
     * @inheritdoc
     */
   override def getChildList(path:String, filter: IOFileFilter, dirFilter: IOFileFilter):Array[File] =
-    FileUtils.listFiles(new File(path), filter, dirFilter).toArray[File](Array()).sortBy(_.getName)
+    FileUtils.listFiles(new File(path), filter, dirFilter).toArray[File](Array()).sortBy(_.getAbsolutePath)
 
   /**
     * @inheritdoc
     */
-  override def getMirrorImageFile(imageToMirror:File, mirrorBasePath:String):File = {
+  override def getMirrorFile(imageToMirror:File, mirrorBasePath:String):File = {
     val imageName = imageToMirror.getName
     val partitionFolder = imageToMirror.getParentFile.getName
     new File(new File(mirrorBasePath, partitionFolder), imageName)
@@ -37,7 +37,7 @@ class FileManagerServiceImpl extends FileManagerService{
   /**
     * @inheritdoc
     */
-  override def getMirrorImageFileWithExtension(imageToMirror:File, mirrorBasePath:String, extension:String):File = {
+  override def getMirrorFileWithExtension(imageToMirror:File, mirrorBasePath:String, extension:String):File = {
     val imageName = imageToMirror.getName
     val imageNameWithExtension = imageName.substring(0, imageName.lastIndexOf(".") + 1).concat(extension)
     val partitionFolder = imageToMirror.getParentFile.getName

@@ -17,12 +17,10 @@ case class InferenceGeometry(`type`:String, coordinates:Array[Double])
 
 /**
   * Class representing the list of properties that the
-  * @param cartodb_id the cartodb identifier
   * @param url url to the image in cartodb
   * @param width width of the original image
   * @param height height of the original image
   * @param pixels number of pixels identified as clusters
   * @param clusters numer of clusters
-  * @param cm2 square centimeters identified as clusters in the picture
   */
-case class InferenceProperties(cartodb_id:Int, url:String, width:Int, height:Int, pixels:Int, clusters:Int, cm2:Int)
+case class InferenceProperties(url:String, width:Int, height:Int, pixels:String, clusters:String)

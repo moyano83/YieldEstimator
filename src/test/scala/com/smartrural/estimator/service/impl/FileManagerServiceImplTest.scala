@@ -37,13 +37,13 @@ class FileManagerServiceImplTest extends FlatSpec{
 
   it should "find the mirror image" in{
     val imageToMirror = new File(originalImagesPath, s"$partition/$imageName")
-    assert(fileManagerService.getMirrorImageFile(imageToMirror, s"$rootPath/test").getAbsolutePath == rootPath.concat
+    assert(fileManagerService.getMirrorFile(imageToMirror, s"$rootPath/test").getAbsolutePath == rootPath.concat
     (s"test/$partition/$imageName"))
   }
 
   it should "fail to retrieve the mirror image if there is no partitions" in {
     val imageToMirror = new File(s"/$imageName")
-    assert(fileManagerService.getMirrorImageFile(imageToMirror, s"${rootPath}/test").getAbsolutePath ==
+    assert(fileManagerService.getMirrorFile(imageToMirror, s"${rootPath}/test").getAbsolutePath ==
       s"${rootPath}test/$imageName")
   }
 }

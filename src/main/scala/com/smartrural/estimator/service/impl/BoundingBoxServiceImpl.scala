@@ -4,7 +4,6 @@ import java.io.File
 
 import com.smartrural.estimator.model.BBoxItemInfo
 import com.smartrural.estimator.service.BoundingBoxService
-import com.smartrural.estimator.util.AppConstants
 
 class BoundingBoxServiceImpl(percentegeFilter:Double = 0.85) extends BoundingBoxService{
 

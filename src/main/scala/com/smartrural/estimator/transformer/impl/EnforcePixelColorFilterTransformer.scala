@@ -4,8 +4,7 @@ import java.io.File
 
 import com.smartrural.estimator.transformer.ImageTransformer
 import com.smartrural.estimator.util.ImageUtils
-import org.opencv.core.{Core, Mat, Size}
-import org.opencv.imgproc.Imgproc
+import org.opencv.core.Mat
 
 /**
   * Created by jm186111 on 10/03/2018.
