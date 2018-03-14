@@ -71,7 +71,10 @@ trait FileManagerService {
     }
     getComposedFileAux(reversedRelativePathLists)
   }
-
+  /**
+    * Filter class to skip Mac filesystem files
+    * @param filter the default filter to call
+    */
   private [FileManagerService] class IOFilterDSStore(filter:IOFileFilter) extends IOFileFilter {
     override def accept(file: File): Boolean = if (file.getName == ".DS_Store") false else filter.accept(file)
 

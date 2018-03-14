@@ -8,7 +8,7 @@ import com.smartrural.estimator.transformer.ImageTransformer
 /**
   * Service that provides functionality to construct the binary images from the patch images
   */
-  trait ImageReconstructionService {
+trait ImageReconstructionService {
   /**
     * Creates a full binary image from the patches and the information contained in the bboxFile provided
     * @param radius the radius of the cluster to consider

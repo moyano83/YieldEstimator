@@ -5,6 +5,7 @@ import java.io.File
 import com.smartrural.estimator.transformer.ImageTransformer
 import com.smartrural.estimator.util.ImageUtils._
 import org.opencv.core._
+import org.opencv.imgcodecs.Imgcodecs
 import org.opencv.imgproc.Imgproc
 
 import scala.collection.JavaConversions._
@@ -39,7 +40,9 @@ class HistogramFilterTransformer(val radius:Int, val sampleImage:Mat) extends Im
   def histogramHSV(hsvPlanes:ArrayBuffer[Mat]): Mat = {
     val histRef = getMat()
     Imgproc.calcHist(hsvPlanes, channels, getMat(), histRef, histSize, ranges)
-    Core.normalize(histRef, histRef, 0, displayImageSideSize, Core.NORM_MINMAX)
+    Core.normalize(histRef, histRef, displayImageSideSize, displayImageSideSize, Core.NORM_MINMAX)
+    Imgcodecs.imwrite("//Users/jm186111/Documents/git-repositories/tutorials/YieldEstimator/target/scala-2" +
+      ".11/test-classes/histo.jpg", histRef)
     histRef
   }
 

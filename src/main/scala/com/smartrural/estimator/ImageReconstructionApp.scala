@@ -47,6 +47,6 @@ import org.slf4j.LoggerFactory
     }
 
     val runner = new ImageReconstructionRunner(radius.toInt, bboxesPath, originalImagesPath, patchImgPath, dstPath)
-    runner.run
+    new Thread(runner).start
   }
 }
