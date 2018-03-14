@@ -18,14 +18,13 @@ import scala.collection.mutable.ArrayBuffer
   */
 class HistogramFilterTransformer(val radius:Int, val sampleImage:Mat) extends ImageTransformer {
 
+  val thresholdValue = 150
   // size of the h, s and v bins
-  val histSize = new MatOfInt(255, 255, 255);
+  val histSize = new MatOfInt(30, 32, 32);
   // hue varies from 0 to 180, saturation and value from 0 to 256
-  val ranges =  new MatOfFloat(0f,180f,0f,256f,0f,256f);
+  val ranges =  new MatOfFloat(0f, 180f, 0f, 256f, 0f, 256f);
   // we compute the histogram from the 0-th and 2-st channels
   val channels = new MatOfInt(0, 1, 2);
-
-  val displayImageSideSize = 512
 
   val cvtRoi = getCVT(sampleImage)
 
@@ -40,9 +39,7 @@ class HistogramFilterTransformer(val radius:Int, val sampleImage:Mat) extends Im
   def histogramHSV(hsvPlanes:ArrayBuffer[Mat]): Mat = {
     val histRef = getMat()
     Imgproc.calcHist(hsvPlanes, channels, getMat(), histRef, histSize, ranges)
-    Core.normalize(histRef, histRef, displayImageSideSize, displayImageSideSize, Core.NORM_MINMAX)
-    Imgcodecs.imwrite("//Users/jm186111/Documents/git-repositories/tutorials/YieldEstimator/target/scala-2" +
-      ".11/test-classes/histo.jpg", histRef)
+    Core.normalize(histRef, histRef, 0, 255, Core.NORM_MINMAX)
     histRef
   }
 
@@ -57,18 +54,18 @@ class HistogramFilterTransformer(val radius:Int, val sampleImage:Mat) extends Im
     Imgproc.calcBackProject(hsvt, channels, sampleHist, dst, ranges, 1)
 
     // Now convolute with circular disc
-    val disc = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(radius,radius))
+    val disc = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(radius,radius))
 
     Imgproc.filter2D(dst, dst, -1, disc)
 
     // threshold and binary AND
-    val thresh, res = getMat()
-    Imgproc.threshold(dst, thresh, 100, 255, Imgproc.THRESH_BINARY)
-    Core.merge(ArrayBuffer(thresh,thresh,thresh), thresh)
+    val mask = getMat()
+    Imgproc.threshold(dst, mask, thresholdValue, 256, Imgproc.THRESH_BINARY)
+    Core.merge(List(mask, mask, mask), mask)
 
-    originalImgHSV.copyTo(res, thresh)
+    Core.bitwise_and(originalImg, mask, dst)
 
-    getRGB(res)
+    dst
   }
 
 

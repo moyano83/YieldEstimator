@@ -3,7 +3,7 @@ package com.smartrural.estimator.runner
 import java.io.File
 
 import com.smartrural.estimator.service.impl.FileManagerServiceImpl
-import com.smartrural.estimator.service.{BoundingBoxService, FileManagerService}
+import com.smartrural.estimator.service.{BoundingBoxService, FileManagerService, InferenceService}
 import com.smartrural.estimator.transformer._
 import com.smartrural.estimator.transformer.impl.{GaussianFilterTransformer, HistogramFilterTransformer, MedianFilterTransformer}
 import org.junit.runner.RunWith
@@ -28,8 +28,9 @@ class ImageFilterRunnerTest extends FlatSpec with MockFactory{
 
   val rootPathFile = new File(getClass.getClassLoader.getResource(".").getPath)
 
-  val imageSample = fileManager.readImage(new File(rootPathFile, "sample.jpg"))
+  val imageSample = fileManager.readImage(new File(rootPathFile, "sample-white.png"))
 
+  val inferenceService = mock[InferenceService]
   val destinationFolder = new File(rootPathFile, "imgRunner")
 
   val radius = 5
@@ -42,12 +43,13 @@ class ImageFilterRunnerTest extends FlatSpec with MockFactory{
   implicit val inj = new Module{
     bind[FileManagerService] to fileManager
     bind[BoundingBoxService] to boundingBoxService
+    bind[InferenceService] to inferenceService
   }
   behavior of "ImageFilterRunner"
 
   val runner = new ImageFilterRunner(
     new File(rootPathFile, "inferences.json"),
-    new File(rootPathFile, "mask").getAbsolutePath,
+    new File(rootPathFile, "inferences").getAbsolutePath,
     new File(rootPathFile, "original_images").getAbsolutePath,
     destinationFolder.getAbsolutePath,
     filterList

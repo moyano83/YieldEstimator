@@ -1,11 +1,9 @@
 package com.smartrural.estimator.transformer
 
 import java.io.File
-import javax.imageio.ImageIO
 
 import com.smartrural.estimator.service.impl.FileManagerServiceImpl
 import com.smartrural.estimator.transformer.impl.HistogramFilterTransformer
-import com.smartrural.estimator.util.ImageUtils
 import org.junit.runner.RunWith
 import org.opencv.core.Core
 import org.scalatest.FlatSpec
@@ -23,7 +21,7 @@ class HistogramFilterTransformerTest extends FlatSpec{
 
   val rootPathFile = new File(getClass.getClassLoader.getResource(".").getPath)
 
-  val imageSampleBuffer = fileManager.readImage(new File(rootPathFile, "sample.png"))
+  val imageSampleBuffer = fileManager.readImage(new File(rootPathFile, "sample-white.png"))
   val image = new File(rootPathFile, "original_images/valdemonjas-2017-09-13_01/z-img-000-000004-gauss.jpg")
   val filter = new HistogramFilterTransformer(5, imageSampleBuffer)
 
