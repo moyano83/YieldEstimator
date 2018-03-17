@@ -11,12 +11,6 @@ case class BinaryPixel(isVoid:Boolean, row:Int, col:Int) {
     * boolean indicating ig the pixel is not void
     */
   val isNotVoid = !isVoid
-
-  def considerInCalculation(allPixels:List[BinaryPixel]):Boolean =
-    !allPixels.contains(BinaryPixel(false, row - 1, col)) ||
-      !allPixels.contains(BinaryPixel(false, row + 1, col)) ||
-      !allPixels.contains(BinaryPixel(false, row, col - 1)) ||
-      !allPixels.contains(BinaryPixel(false, row, col + 1))
   /**
     * @inheritdoc
     */
