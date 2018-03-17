@@ -1,5 +1,7 @@
 package com.smartrural.estimator.model
 
+import com.smartrural.estimator.util.AppConstants
+
 /**
   * Created by jm186111 on 26/02/2018.
   */
@@ -31,5 +33,5 @@ case class VineYieldParameters(pictureName:String,
     longitude.toString,
     pixels.toString,
     clusters.toString,
-    occlusionPercentage.toString).mkString(",")
+    AppConstants.NumberFormatter.format(occlusionPercentage)).mkString(",")
 }

@@ -1,5 +1,7 @@
 package com.smartrural.estimator.util
 
+import java.text.DecimalFormat
+
 import com.smartrural.estimator.model.BinaryPixel
 
 object AppConstants {
@@ -107,4 +109,8 @@ object AppConstants {
     * txt extension
     */
   val TextExtension = "txt"
+  /**
+    * Decimal formatter
+    */
+  val NumberFormatter = new DecimalFormat("#0.000");
 }

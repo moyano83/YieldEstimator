@@ -4,7 +4,6 @@ import java.io.File
 
 import com.smartrural.estimator.service.impl.FileManagerServiceImpl
 import com.smartrural.estimator.service.{BoundingBoxService, FileManagerService, InferenceService}
-import com.smartrural.estimator.transformer._
 import com.smartrural.estimator.transformer.impl.{GaussianFilterTransformer, HistogramFilterTransformer, MedianFilterTransformer}
 import org.junit.runner.RunWith
 import org.opencv.core.Core

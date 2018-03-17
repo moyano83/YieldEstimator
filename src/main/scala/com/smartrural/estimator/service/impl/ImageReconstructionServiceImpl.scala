@@ -63,7 +63,7 @@ class ImageReconstructionServiceImpl(implicit inj:Injector) extends ImageReconst
                                 destinationImage: Mat):Option[Mat] = {
     inferenceInfoList.foreach(inferenceInfo => {
       findMatchingMatByResolution(patchImagesList, inferenceInfo)
-        .map(mat => writeInferenceImagePixels(mat, inferenceInfo, destinationImage))
+        .foreach(mat => writeInferenceImagePixels(mat, inferenceInfo, destinationImage))
     })
 
     if(patchImagesList.isEmpty) None

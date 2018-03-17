@@ -3,7 +3,7 @@ package com.smartrural.estimator.transformer
 import java.io.File
 
 import com.smartrural.estimator.service.impl.FileManagerServiceImpl
-import com.smartrural.estimator.transformer.impl.{ClusterSurroundingFilterTransformer, EnforcePixelColorFilterTransformer}
+import com.smartrural.estimator.transformer.impl.EnforcePixelColorFilterTransformer
 import org.junit.runner.RunWith
 import org.opencv.core.Core
 import org.scalamock.scalatest.MockFactory

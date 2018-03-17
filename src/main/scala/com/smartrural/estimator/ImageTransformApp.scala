@@ -6,7 +6,6 @@ import java.util.Properties
 import com.smartrural.estimator.di.YieldEstimatorModule
 import com.smartrural.estimator.runner.ImageFilterRunner
 import com.smartrural.estimator.service.FileManagerService
-import com.smartrural.estimator.transformer.ImageTransformer
 import com.smartrural.estimator.transformer.impl._
 import com.smartrural.estimator.util.AppConstants
 import com.smartrural.estimator.util.AppConstants._
@@ -63,8 +62,7 @@ object ImageTransformApp {
     )
 
     val runner = new ImageFilterRunner(inferencesFile, maskImagePath, originalImagesPath, destinationPath, listFilters)
-    val appThread = new Thread(runner)
-    appThread.start()
+    runner.run()
   }
 
   class FileManagerHelper(implicit val inj:Injector) extends Injectable{

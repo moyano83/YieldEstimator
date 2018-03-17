@@ -21,14 +21,14 @@ class HistogramFilterTransformerTest extends FlatSpec{
 
   val rootPathFile = new File(getClass.getClassLoader.getResource(".").getPath)
 
-  val imageSampleBuffer = fileManager.readImage(new File(rootPathFile, "sample-white.png"))
-  val image = new File(rootPathFile, "original_images/valdemonjas-2017-09-13_01/z-img-000-000004-gauss.jpg")
+  val imageSampleBuffer = fileManager.readImage(new File(rootPathFile, "sample1.png"))
+  val image = new File(rootPathFile, "original_images/valdemonjas-2017-09-13_01/z-img-000-000003.jpg")
   val filter = new HistogramFilterTransformer(5, imageSampleBuffer)
 
   behavior of "HistogramFilterTransformer"
 
   it should "execute the filter transformation" in {
-    val dstImage = "z-img-000-000004-histogram.jpg"
+    val dstImage = "histogram.jpg"
     val dstFile = new File(rootPathFile, dstImage)
     val originalImage = fileManager.readImage(image)
     fileManager.writeImage(filter.transform(image, originalImage), dstFile)

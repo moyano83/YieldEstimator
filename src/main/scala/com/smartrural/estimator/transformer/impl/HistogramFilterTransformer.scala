@@ -5,7 +5,6 @@ import java.io.File
 import com.smartrural.estimator.transformer.ImageTransformer
 import com.smartrural.estimator.util.ImageUtils._
 import org.opencv.core._
-import org.opencv.imgcodecs.Imgcodecs
 import org.opencv.imgproc.Imgproc
 
 import scala.collection.JavaConversions._
@@ -18,7 +17,7 @@ import scala.collection.mutable.ArrayBuffer
   */
 class HistogramFilterTransformer(val radius:Int, val sampleImage:Mat) extends ImageTransformer {
 
-  val thresholdValue = 150
+  val thresholdValue = 200
   // size of the h, s and v bins
   val histSize = new MatOfInt(30, 32, 32);
   // hue varies from 0 to 180, saturation and value from 0 to 256

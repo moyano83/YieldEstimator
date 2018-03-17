@@ -103,7 +103,7 @@ object ImageUtils {
     * @param img to copy
     * @return the new Mat
     */
-  def getCopyMat(img:Mat) = {
+  def getCopyMat(img:Mat):Mat = {
     val mat = new Mat(img.rows, img.cols, CvType.CV_8UC3)
     for(row<-0 until img.rows;
         col<-0 until img.cols;
