@@ -31,7 +31,7 @@ case class VineYieldParameters(pictureName:String,
   override def toString: String = Array(pictureName,
     latitude.toString,
     longitude.toString,
-    pixels.toString,
     clusters.toString,
+    pixels.toString,
     AppConstants.NumberFormatter.format(occlusionPercentage)).mkString(",")
 }
