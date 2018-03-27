@@ -12,16 +12,12 @@ x = df[['nr_pixels', 'occlusion']]
 
 y = df['weight']
 
-
-
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=42)
 
 reg = linear_model.LinearRegression(copy_X=True, fit_intercept=True, n_jobs=1, normalize=False)
 reg.fit(x_train, y_train)
 
-
 weight = reg.predict(x_test)
-
 
 # The coefficients
 print('Coefficients: %s' % reg.coef_)
