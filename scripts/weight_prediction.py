@@ -24,7 +24,7 @@ weight = reg.predict(x_test)
 
 
 # The coefficients
-print('Coefficients: \n', reg.coef_)
+print('Coefficients: %s' % reg.coef_)
 # Explained variance score: 1 is perfect prediction
 print('Variance score: %.2f' % r2_score(weight, y_test))
 # The mean squared error
