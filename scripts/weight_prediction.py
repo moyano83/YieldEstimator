@@ -1,36 +1,35 @@
 import pandas as pd
-import numpy as np
 from sklearn import datasets, linear_model
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error, r2_score, median_absolute_error
+from sklearn.metrics import mean_squared_error as mse, r2_score as r2, median_absolute_error as mad
 import matplotlib.pyplot as plt
 import sys
 
+# Loads the dataset passed by parameter when the script is called
 df = pd.read_csv(sys.argv[1])
 
+# Columns to use in the prediction
 x = df[['nr_pixels', 'occlusion']]
 
+# Target value
 y = df['weight']
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=42)
+# The dataset is divided in training (70%) and test (30%) using random selection
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.33, random_state=42)
 
 reg = linear_model.LinearRegression(copy_X=True, fit_intercept=True, n_jobs=1, normalize=False)
 reg.fit(x_train, y_train)
 
-weight = reg.predict(x_test)
+# Prediction of the weight (w)
+w = reg.predict(x_test)
 
-# The coefficients
-print('Coefficients: %s' % reg.coef_)
-# Explained variance score: 1 is perfect prediction
-print('Variance score: %.2f' % r2_score(weight, y_test))
-# The mean squared error
-print("Mean squared error: %.2f" % mean_squared_error(weight, y_test))
-# The median absolute error
-print('Median absolute error: %.2f' % median_absolute_error(weight, y_test))
+# Explained variance score: 1 is perfect prediction, the mean squared error and median absolute error
+print('Variance=[%.2f], MSE=[%.2f], MAD=[%.2f]' % (r2(w,y_test), mse(w, y_test), mad(w, y_test)))
 
+# Plotting the results
 fig, ax = plt.subplots()
-ax.scatter(y_test, weight, edgecolors=(0, 0, 0))
-ax.plot([y_test.min(), y_test.max()], [weight.min(), weight.max()], '--', lw=1)
+ax.scatter(y_test, w, edgecolors=(0, 0, 0))
+ax.plot([y_test.min(), y_test.max()], [w.min(), w.max()], '--', lw=1)
 ax.set_xlabel('Measured')
 ax.set_ylabel('Predicted')
 plt.show()
