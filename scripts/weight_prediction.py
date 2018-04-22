@@ -24,7 +24,7 @@ reg.fit(x_train, y_train)
 w = reg.predict(x_test)
 
 # Explained variance score: 1 is perfect prediction, the mean squared error and median absolute error
-print('Variance=[%.2f], MSE=[%.2f], MAD=[%.2f]' % (r2(w,y_test), mse(w, y_test), mad(w, y_test)))
+print('Coefficient of determination=[%.2f], MSE=[%.2f], MAD=[%.2f]' % (r2(w,y_test), mse(w, y_test), mad(w, y_test)))
 
 # Plotting the results
 fig, ax = plt.subplots()
